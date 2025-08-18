@@ -152,6 +152,20 @@ export interface MeshGradientFrequencyConfig {
   delta?: number;
 }
 
+export interface MeshGradientFadeTransitionConfig {
+  /**
+   * Enable fade transition when updating gradient
+   * @default false
+   */
+  transition?: boolean;
+
+  /**
+   * Duration of fade transition in milliseconds
+   * @default 250
+   */
+  transitionDuration?: number;
+}
+
 export interface MeshGradientOptions {
   /**
    * Seed for the gradient.

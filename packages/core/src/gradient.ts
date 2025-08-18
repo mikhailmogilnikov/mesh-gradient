@@ -15,6 +15,7 @@ import type {
   MouseEventHandler,
   AnimationFrameHandler,
   MeshGradientOptions,
+  MeshGradientFadeTransitionConfig,
 } from './types';
 
 import { normalizeColor, setProperty, parseHexColor } from './utils';
@@ -187,6 +188,67 @@ export class MeshGradient {
     this.computedCanvasStyle = undefined;
     this.conf = undefined;
     this.scrollObserver = undefined;
+  }
+
+  /**
+   * Updates the gradient with new configuration. Supports fade transition if enabled.
+   * @param config - New configuration options
+   */
+  public update(config: MeshGradientOptions & MeshGradientFadeTransitionConfig) {
+    if (!this.el) return;
+
+    // Если fade transition включен, используем плавный переход
+    if (config.transition) {
+      this.updateWithFadeTransition(config);
+    } else {
+      // Обычное мгновенное обновление
+      this.destroy();
+      this.init(this.el as HTMLCanvasElement, config);
+    }
+  }
+
+  /**
+   * Updates gradient with smooth fade transition
+   * @param config - New configuration options
+   */
+  private updateWithFadeTransition(config: MeshGradientOptions & MeshGradientFadeTransitionConfig) {
+    if (!this.el) return;
+
+    const duration = config.transitionDuration || 250;
+    const canvas = this.el;
+
+    const originalCanvas = canvas;
+
+    canvas.style.transition = `opacity ${duration}ms ease-in-out`;
+    canvas.style.opacity = '1';
+
+    requestAnimationFrame(() => {
+      canvas.style.opacity = '0';
+    });
+
+    setTimeout(() => {
+      this.destroy();
+
+      this.init(originalCanvas, config);
+
+      if (this.el) {
+        this.el.style.opacity = '0';
+        this.el.style.transition = `opacity ${duration}ms ease-in-out`;
+
+        requestAnimationFrame(() => {
+          if (this.el) {
+            this.el.style.opacity = '';
+          }
+        });
+
+        setTimeout(() => {
+          if (this.el) {
+            this.el.style.transition = '';
+            this.el.style.opacity = '';
+          }
+        }, duration);
+      }
+    }, duration);
   }
 
   /**
