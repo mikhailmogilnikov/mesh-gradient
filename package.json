@@ -9,7 +9,6 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "check-types": "turbo run check-types",
     "prepare": "husky",
     "lint-staged": "lint-staged",
     "commitlint": "commitlint --from HEAD~1 --to HEAD --verbose"
