@@ -9,11 +9,16 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "check-types": "turbo run check-types",
     "prepare": "husky",
     "lint-staged": "lint-staged",
-    "commitlint": "commitlint --from HEAD~1 --to HEAD --verbose"
+    "commitlint": "commitlint --from HEAD~1 --to HEAD --verbose",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "turbo run build && changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.6",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "husky": "^9.1.7",
