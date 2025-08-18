@@ -1,3 +1,5 @@
+import { Vec4 } from './types';
+
 // Animation and timing constants
 export const DEFAULT_TIME_VALUE = 1253106;
 export const MAX_FRAME_DELTA = 1000 / 15; // 15 FPS limit
@@ -53,10 +55,15 @@ export const WAVE_LAYER_NOISE_CEIL_INCREMENT = 0.07;
 export const DEFAULT_FALLBACK_COLORS = [16711680, 16711680, 16711935, 65280, 255];
 
 // CSS variable names
-export const CSS_GRADIENT_VARS = ['--gradient-color-1', '--gradient-color-2', '--gradient-color-3', '--gradient-color-4'] as const;
+export const CSS_GRADIENT_VARS = [
+  '--mesh-gradient-color-1',
+  '--mesh-gradient-color-2',
+  '--mesh-gradient-color-3',
+  '--mesh-gradient-color-4',
+] as const;
 
 // Active colors default
-export const DEFAULT_ACTIVE_COLORS: [number, number, number, number] = [1, 1, 1, 1];
+export const DEFAULT_ACTIVE_COLORS: Vec4 = [1, 1, 1, 1];
 
 // WebGL debug query
 export const DEBUG_QUERY_STRING = 'debug=webgl';

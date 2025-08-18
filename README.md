@@ -1,12 +1,27 @@
 # Mesh Gradient
 
-Apple-inspired **mesh gradient** for the web. Rewrited fully on **TypeScript** and supercharged for **all modern frameworks**.
+Apple-inspired animated **mesh gradient** for the web. Writed fully on **TypeScript** and supercharged for **all modern frameworks**.
+
+## Documentation
+
+Documentation website currently **WIP**
+
+## Quick start
+
+```ts
+import { MeshGradient } from 'web-mesh-gradient';
+
+const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
+const meshGradient = new MeshGradient();
+
+meshGradient.init(canvas);
+```
 
 ## Credits
 
-- [@jordienr](https://github.com/jordienr) - source code
-- [@kevinhufnagl](https://kevinhufnagl.com/) - source code
-- [Stripe](https://stripe.com) - core functionality
+- [@jordienr](https://github.com/jordienr)
+- [@kevinhufnagl](https://kevinhufnagl.com/)
+- [@stripe](https://stripe.com)
 
 ## Contributing
 

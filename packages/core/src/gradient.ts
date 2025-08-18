@@ -27,8 +27,6 @@ import * as CONSTANTS from './constants';
  */
 export class MeshGradient {
   public el?: HTMLCanvasElement | null;
-  public width?: number;
-  public height?: number;
   public amp = CONSTANTS.DEFAULT_AMP;
   public seed = CONSTANTS.DEFAULT_SEED;
   public freqX = CONSTANTS.DEFAULT_FREQ_X;
@@ -54,6 +52,8 @@ export class MeshGradient {
   private isMetaKey = false;
   private wasPlayingBeforeInvisible = false; // Animation state before going out of viewport
   private intersectionObserver?: IntersectionObserver; // Observer for tracking visibility
+  private width?: number;
+  private height?: number;
 
   private isMouseDown = false;
   private shaderFiles?: ShaderFiles;

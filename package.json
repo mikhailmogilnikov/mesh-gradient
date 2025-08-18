@@ -39,15 +39,6 @@
     "apps/**/*.{js,jsx,ts,tsx,mjs,cjs}": [
       "eslint --fix",
       "prettier --write"
-    ],
-    "packages/**/*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ],
-    "apps/**/*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
     ]
   }
 }

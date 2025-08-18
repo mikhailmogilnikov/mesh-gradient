@@ -1,5 +1,5 @@
 export type Vec3 = [number, number, number];
-export type Vec4 = [number, number, number, number];
+export type Vec4 = [0 | 1, 0 | 1, 0 | 1, 0 | 1];
 
 // Types for MiniGl inner classes
 export interface UniformConfig {
