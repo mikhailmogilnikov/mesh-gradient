@@ -1,4 +1,4 @@
-import { Vec4 } from './types';
+import { MeshGradientToggleColorsConfig, Vec4 } from './types';
 
 // Animation and timing constants
 export const DEFAULT_TIME_VALUE = 1253106;
@@ -20,6 +20,21 @@ export const RESIZE_THROTTLE_DELAY = 300; // milliseconds
 export const DEFAULT_DENSITY: [number, number] = [0.06, 0.16];
 export const DEFAULT_ZOOM = 1;
 export const DEFAULT_ROTATION = 0;
+export const DEFAULT_PRESET_NAME = '';
+export const DEFAULT_WIREFRAME = false;
+
+export const DEFAULT_PAUSE_OBSERVER_OPTIONS: IntersectionObserverInit = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 0.05,
+};
+
+export const DEFAULT_ACTIVE_TOGGLE_COLORS: MeshGradientToggleColorsConfig = {
+  1: true,
+  2: true,
+  3: true,
+  4: true,
+};
 
 // Noise and animation constants
 export const DEFAULT_AMP = 320;

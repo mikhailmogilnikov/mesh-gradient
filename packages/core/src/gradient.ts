@@ -14,9 +14,10 @@ import type {
   EventHandler,
   MouseEventHandler,
   AnimationFrameHandler,
+  MeshGradientOptions,
 } from './types';
 
-import { normalizeColor, setProperty, createDefaultConfig, parseHexColor } from './utils';
+import { normalizeColor, setProperty, parseHexColor } from './utils';
 import { MiniGl } from './minigl';
 import { SHADERS } from './shaders';
 import * as CONSTANTS from './constants';
@@ -26,16 +27,18 @@ import * as CONSTANTS from './constants';
  * Manages WebGL rendering of animated gradient effects
  */
 export class MeshGradient {
-  public el?: HTMLCanvasElement | null;
-  public amp = CONSTANTS.DEFAULT_AMP;
-  public seed = CONSTANTS.DEFAULT_SEED;
-  public freqX = CONSTANTS.DEFAULT_FREQ_X;
-  public freqY = CONSTANTS.DEFAULT_FREQ_Y;
-  public freqDelta = CONSTANTS.DEFAULT_FREQ_DELTA;
-  public activeColors: Vec4 = CONSTANTS.DEFAULT_ACTIVE_COLORS;
-  public isStatic = false;
-  public autoPauseOnInvisible = true; // Auto pause when gradient goes out of viewport
-  public init!: (selector?: string | HTMLCanvasElement) => MeshGradient;
+  public init!: (selector?: string | HTMLCanvasElement, options?: MeshGradientOptions) => MeshGradient;
+
+  private el?: HTMLCanvasElement | null;
+  private amp = CONSTANTS.DEFAULT_AMP;
+  private seed = CONSTANTS.DEFAULT_SEED;
+  private freqX = CONSTANTS.DEFAULT_FREQ_X;
+  private freqY = CONSTANTS.DEFAULT_FREQ_Y;
+  // @ts-ignore
+  private freqDelta = CONSTANTS.DEFAULT_FREQ_DELTA;
+  private activeColors: Vec4 = CONSTANTS.DEFAULT_ACTIVE_COLORS;
+  private isStatic = false;
+  private autoPauseOnInvisible = true; // Auto pause when gradient goes out of viewport
 
   private minigl?: MiniGl;
   private cssVarRetries: number = 0;
@@ -52,6 +55,8 @@ export class MeshGradient {
   private isMetaKey = false;
   private wasPlayingBeforeInvisible = false; // Animation state before going out of viewport
   private intersectionObserver?: IntersectionObserver; // Observer for tracking visibility
+  // @ts-ignore
+  private pauseObserverOptions: IntersectionObserverInit = CONSTANTS.DEFAULT_PAUSE_OBSERVER_OPTIONS;
   private width?: number;
   private height?: number;
 
@@ -85,6 +90,156 @@ export class MeshGradient {
   constructor() {
     this.initializeProperties();
     this.setupEventHandlers();
+  }
+
+  /**
+   * Completely destroys the gradient and cleans up all resources
+   * This method should be called when the gradient is no longer needed
+   */
+  public destroy(): void {
+    // Stop animation and clear timeouts
+    this.pause();
+    if (this.scrollingTimeout) {
+      clearTimeout(this.scrollingTimeout);
+      this.scrollingTimeout = undefined;
+    }
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = undefined;
+    }
+
+    // Remove all event listeners
+    this.disconnect();
+
+    // Remove CSS classes
+    if (this.el) {
+      this.el.classList.remove('isLoaded');
+      if (this.el.parentElement) {
+        this.el.parentElement.classList.remove('isLoaded');
+      }
+    }
+
+    // Clean up WebGL resources
+    if (this.mesh) {
+      this.mesh.remove();
+      this.mesh = undefined;
+    }
+
+    if (this.minigl) {
+      // Clear all meshes from minigl
+      this.minigl.meshes.forEach((mesh) => {
+        if (mesh.remove) mesh.remove();
+      });
+      this.minigl.meshes = [];
+
+      // Clear WebGL context if possible
+      if (this.minigl.gl) {
+        const gl = this.minigl.gl;
+
+        // Clear the canvas completely
+        gl.clearColor(0.0, 0.0, 0.0, 0.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        // Delete buffers and shaders if material exists
+        if (this.material) {
+          if (this.material.vertexShader) {
+            gl.deleteShader(this.material.vertexShader);
+          }
+          if (this.material.fragmentShader) {
+            gl.deleteShader(this.material.fragmentShader);
+          }
+          if (this.material.program) {
+            gl.deleteProgram(this.material.program);
+          }
+        }
+
+        // Delete geometry buffers
+        if (this.geometry && this.geometry.attributes) {
+          Object.values(this.geometry.attributes).forEach((attribute) => {
+            if (attribute.buffer) {
+              gl.deleteBuffer(attribute.buffer);
+            }
+          });
+        }
+      }
+
+      // Additionally clear canvas using 2D context as fallback
+      if (this.minigl.canvas) {
+        const canvas = this.minigl.canvas;
+        const ctx = canvas.getContext('2d');
+
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+    }
+
+    // Clear all object references
+    this.el = null;
+    this.minigl = undefined;
+    this.mesh = undefined;
+    this.material = undefined;
+    this.geometry = undefined;
+    this.uniforms = undefined;
+    this.shaderFiles = undefined;
+    this.vertexShader = undefined;
+    this.sectionColors = undefined;
+    this.computedCanvasStyle = undefined;
+    this.conf = undefined;
+    this.scrollObserver = undefined;
+  }
+
+  /**
+   * Updates noise frequency over time for animation
+   * @param e - Frequency delta
+   */
+  public updateFrequency(e: number) {
+    this.freqX += e;
+    this.freqY += e;
+  }
+
+  public toggleColor(index: number) {
+    this.activeColors[index] = this.activeColors[index] === 0 ? 1 : 0;
+  }
+
+  /**
+   * Manually start gradient animation
+   */
+  public play(): void {
+    if (!this.conf) return;
+
+    this.conf.playing = true;
+    requestAnimationFrame(this.animate);
+  }
+
+  /**
+   * Manually pause gradient animation
+   */
+  public pause(): void {
+    if (!this.conf) return;
+
+    this.conf.playing = false;
+  }
+
+  /**
+   * Enable or disable auto-pause when gradient goes out of viewport
+   * @param enabled - Whether to enable auto-pause functionality
+   */
+  public setAutoPause(enabled: boolean): void {
+    this.autoPauseOnInvisible = enabled;
+
+    if (!enabled && this.intersectionObserver) {
+      // If disabled, disconnect observer and resume if was paused by auto-pause
+      this.intersectionObserver.disconnect();
+      this.intersectionObserver = undefined;
+      if (!this.isIntersecting && this.wasPlayingBeforeInvisible) {
+        this.play();
+        this.wasPlayingBeforeInvisible = false;
+      }
+    } else if (enabled && this.el && !this.intersectionObserver) {
+      // If enabled and canvas exists, reinitialize observer
+      this.initIntersectionObserver();
+    }
   }
 
   /**
@@ -220,201 +375,49 @@ export class MeshGradient {
       }
     });
 
-    setProperty(this, 'init', (selector: string | HTMLCanvasElement) => {
-      // Generate random seed for each initialization
-      this.seed = Math.random() * 100;
+    setProperty(this, 'init', (selector: string | HTMLCanvasElement, options?: MeshGradientOptions) => {
+      this.seed = options?.seed || Math.random() * 100;
+      this.isStatic = options?.isStatic || false;
+      this.resizeDelay = options?.resizeDelay || CONSTANTS.RESIZE_THROTTLE_DELAY;
 
-      // Find canvas element and initialize gradient
+      if (typeof options?.frequency === 'number') {
+        this.freqX = options.frequency;
+        this.freqY = options.frequency;
+        this.freqDelta = options.frequency;
+      } else {
+        this.freqX = options?.frequency?.x || CONSTANTS.DEFAULT_FREQ_X;
+        this.freqY = options?.frequency?.y || CONSTANTS.DEFAULT_FREQ_Y;
+        this.freqDelta = options?.frequency?.delta || CONSTANTS.DEFAULT_FREQ_DELTA;
+      }
+
+      const activeColors = {
+        ...CONSTANTS.DEFAULT_ACTIVE_TOGGLE_COLORS,
+        ...options?.activeColors,
+      };
+
+      this.activeColors = [activeColors[1] ? 1 : 0, activeColors[2] ? 1 : 0, activeColors[3] ? 1 : 0, activeColors[4] ? 1 : 0];
+
+      this.pauseObserverOptions = {
+        ...CONSTANTS.DEFAULT_PAUSE_OBSERVER_OPTIONS,
+        ...options?.pauseObserverOptions,
+      };
+
+      this.autoPauseOnInvisible = options?.pauseOnOutsideViewport ?? true;
+
+      this.conf = {
+        presetName: CONSTANTS.DEFAULT_PRESET_NAME,
+        wireframe: CONSTANTS.DEFAULT_WIREFRAME,
+        zoom: CONSTANTS.DEFAULT_ZOOM,
+        rotation: CONSTANTS.DEFAULT_ROTATION,
+        density: CONSTANTS.DEFAULT_DENSITY,
+        playing: !this.isStatic,
+      };
+
       this.el = typeof selector === 'string' ? document.querySelector(selector) : selector;
       this.connect();
 
       return this;
     });
-  }
-
-  /**
-   * Completely destroys the gradient and cleans up all resources
-   * This method should be called when the gradient is no longer needed
-   */
-  public destroy(): void {
-    // Stop animation and clear timeouts
-    this.pause();
-    if (this.scrollingTimeout) {
-      clearTimeout(this.scrollingTimeout);
-      this.scrollingTimeout = undefined;
-    }
-    if (this.resizeTimeout) {
-      clearTimeout(this.resizeTimeout);
-      this.resizeTimeout = undefined;
-    }
-
-    // Remove all event listeners
-    this.disconnect();
-
-    // Remove CSS classes
-    if (this.el) {
-      this.el.classList.remove('isLoaded');
-      if (this.el.parentElement) {
-        this.el.parentElement.classList.remove('isLoaded');
-      }
-    }
-
-    // Clean up WebGL resources
-    if (this.mesh) {
-      this.mesh.remove();
-      this.mesh = undefined;
-    }
-
-    if (this.minigl) {
-      // Clear all meshes from minigl
-      this.minigl.meshes.forEach((mesh) => {
-        if (mesh.remove) mesh.remove();
-      });
-      this.minigl.meshes = [];
-
-      // Clear WebGL context if possible
-      if (this.minigl.gl) {
-        const gl = this.minigl.gl;
-
-        // Clear the canvas completely
-        gl.clearColor(0.0, 0.0, 0.0, 0.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        // Delete buffers and shaders if material exists
-        if (this.material) {
-          if (this.material.vertexShader) {
-            gl.deleteShader(this.material.vertexShader);
-          }
-          if (this.material.fragmentShader) {
-            gl.deleteShader(this.material.fragmentShader);
-          }
-          if (this.material.program) {
-            gl.deleteProgram(this.material.program);
-          }
-        }
-
-        // Delete geometry buffers
-        if (this.geometry && this.geometry.attributes) {
-          Object.values(this.geometry.attributes).forEach((attribute) => {
-            if (attribute.buffer) {
-              gl.deleteBuffer(attribute.buffer);
-            }
-          });
-        }
-      }
-
-      // Additionally clear canvas using 2D context as fallback
-      if (this.minigl.canvas) {
-        const canvas = this.minigl.canvas;
-        const ctx = canvas.getContext('2d');
-
-        if (ctx) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-      }
-    }
-
-    // Clear all object references
-    this.el = null;
-    this.minigl = undefined;
-    this.mesh = undefined;
-    this.material = undefined;
-    this.geometry = undefined;
-    this.uniforms = undefined;
-    this.shaderFiles = undefined;
-    this.vertexShader = undefined;
-    this.sectionColors = undefined;
-    this.computedCanvasStyle = undefined;
-    this.conf = undefined;
-    this.scrollObserver = undefined;
-
-    // Reset state properties
-    this.cssVarRetries = 0;
-    this.angle = 0;
-    this.isLoadedClass = false;
-    this.isScrolling = false;
-    this.isIntersecting = false;
-    this.isMetaKey = false;
-    this.isMouseDown = false;
-    this.isStatic = false;
-
-    // Reset animation properties
-    this.t = CONSTANTS.DEFAULT_TIME_VALUE;
-    this.last = 0;
-    this.frame = 0;
-
-    // Reset dimension properties
-    this.width = undefined;
-    this.height = undefined;
-    this.xSegCount = undefined;
-    this.ySegCount = undefined;
-
-    // Reset effects properties
-    this.amp = CONSTANTS.DEFAULT_AMP;
-    this.seed = CONSTANTS.DEFAULT_SEED;
-    this.freqX = CONSTANTS.DEFAULT_FREQ_X;
-    this.freqY = CONSTANTS.DEFAULT_FREQ_Y;
-    this.freqDelta = CONSTANTS.DEFAULT_FREQ_DELTA;
-    this.activeColors = [...CONSTANTS.DEFAULT_ACTIVE_COLORS];
-    this.autoPauseOnInvisible = true;
-    this.wasPlayingBeforeInvisible = false;
-
-    // Reset timeout properties
-    this.resizeTimeout = undefined;
-    this.resizeDelay = 300;
-  }
-
-  /**
-   * Updates noise frequency over time for animation
-   * @param e - Frequency delta
-   */
-  public updateFrequency(e: number) {
-    this.freqX += e;
-    this.freqY += e;
-  }
-
-  public toggleColor(index: number) {
-    this.activeColors[index] = this.activeColors[index] === 0 ? 1 : 0;
-  }
-
-  /**
-   * Manually start gradient animation
-   */
-  public play(): void {
-    if (!this.conf) return;
-
-    this.conf.playing = true;
-    requestAnimationFrame(this.animate);
-  }
-
-  /**
-   * Manually pause gradient animation
-   */
-  public pause(): void {
-    if (!this.conf) return;
-
-    this.conf.playing = false;
-  }
-
-  /**
-   * Enable or disable auto-pause when gradient goes out of viewport
-   * @param enabled - Whether to enable auto-pause functionality
-   */
-  public setAutoPause(enabled: boolean): void {
-    this.autoPauseOnInvisible = enabled;
-
-    if (!enabled && this.intersectionObserver) {
-      // If disabled, disconnect observer and resume if was paused by auto-pause
-      this.intersectionObserver.disconnect();
-      this.intersectionObserver = undefined;
-      if (!this.isIntersecting && this.wasPlayingBeforeInvisible) {
-        this.play();
-        this.wasPlayingBeforeInvisible = false;
-      }
-    } else if (enabled && this.el && !this.intersectionObserver) {
-      // If enabled and canvas exists, reinitialize observer
-      this.initIntersectionObserver();
-    }
   }
 
   /**
@@ -448,7 +451,6 @@ export class MeshGradient {
    */
   private async connect(): Promise<void> {
     this.shaderFiles = SHADERS;
-    this.conf = createDefaultConfig();
 
     // Find canvas element
     if (document.querySelectorAll('canvas').length < 1) {
@@ -505,11 +507,7 @@ export class MeshGradient {
   private initIntersectionObserver(): void {
     if (!this.el || !this.autoPauseOnInvisible) return;
 
-    const options = {
-      root: null, // viewport
-      rootMargin: '0px',
-      threshold: 0.05, // Trigger when 5% of element is visible
-    };
+    const options = this.pauseObserverOptions;
 
     this.intersectionObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {

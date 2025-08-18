@@ -125,3 +125,78 @@ export interface GradientConstructorOptions {
 export type EventHandler = () => void;
 export type MouseEventHandler = (event: MouseEvent) => void;
 export type AnimationFrameHandler = (time: number) => void;
+
+/**
+ * Active colors for the gradient.
+ */
+export interface MeshGradientToggleColorsConfig {
+  1?: boolean;
+  2?: boolean;
+  3?: boolean;
+  4?: boolean;
+}
+
+/**
+ * Colors in hex format.
+ */
+export interface MeshGradientColorsConfig {
+  1: string;
+  2: string;
+  3: string;
+  4: string;
+}
+
+export interface MeshGradientFrequencyConfig {
+  x?: number;
+  y?: number;
+  delta?: number;
+}
+
+export interface MeshGradientOptions {
+  /**
+   * Seed for the gradient.
+   * @default random value
+   */
+  seed?: number;
+
+  /**
+   * Frequency for the gradient. Can be a single number or an object with x, y, and delta properties.
+   * @default { x:  0.00014, y: 0.00029, delta: 0.0001 }
+   */
+  frequency?: number | MeshGradientFrequencyConfig;
+
+  /**
+   * Active colors for the gradient.
+   * @default { 1: true, 2: true, 3: true, 4: true }
+   */
+  activeColors?: MeshGradientToggleColorsConfig;
+
+  /**
+   * Static mode. If true, the gradient will not animate. Optimized for performance.
+   * @default false
+   */
+  isStatic?: boolean;
+
+  /**
+   * Auto pause when gradient goes out of viewport. Powered by Intersection Observer API.
+   * @default true
+   */
+  pauseOnOutsideViewport?: boolean;
+
+  /**
+   * Intersection observer options for pause on outside viewport option.
+   * @default { root: document.body, rootMargin: '0px', threshold: 0.05 }
+   */
+  pauseObserverOptions?: IntersectionObserverInit;
+
+  /**
+   * Resize delay after canvas is resized. Helps to optimize performance.
+   * @default 300 ms
+   */
+  resizeDelay?: number;
+
+  /**
+   * Colors in hex format.
+   */
+  colors?: MeshGradientColorsConfig;
+}
