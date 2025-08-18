@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i
 
-      - name: Running build, lint and test
+      - name: Running build
         run: pnpm build
         env:
           NODE_ENV: production
