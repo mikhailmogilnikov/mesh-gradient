@@ -1,0 +1,10 @@
+{
+  "extends": "@repo/ts-config/pack.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*", "stories/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

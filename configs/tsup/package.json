@@ -1,0 +1,13 @@
+{
+  "name": "@repo/tsup-config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./package": "./package.js"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "tsup": "^8"
+  }
+}

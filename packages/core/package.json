@@ -1,0 +1,54 @@
+{
+  "name": "web-mesh-gradient",
+  "version": "1.0.0",
+  "description": "The SwiftUI Mesh Gradient abstraction for web",
+  "keywords": [
+    "mesh-gradient"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikhailmogilnikov/mesh-gradient.git",
+    "directory": "packages/core"
+  },
+  "author": "Mikhail Mogilnikov",
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "clean": "rm -rf dist",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@repo/tsup-config": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/ts-config": "workspace:*",
+    "eslint": "^9",
+    "turbo": "^2",
+    "typescript": "^5",
+    "tsup": "^8"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

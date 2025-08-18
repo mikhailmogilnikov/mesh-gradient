@@ -1,0 +1,15 @@
+{
+  "name": "@repo/ts-config",
+  "version": "1.0.0",
+  "files": [
+    "pack.json"
+  ],
+  "private": true,
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "typescript": ">= 5"
+  }
+}
