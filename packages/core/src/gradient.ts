@@ -203,11 +203,9 @@ export class MeshGradient {
   public update(config: MeshGradientOptions & MeshGradientFadeTransitionConfig) {
     if (!this.el) return;
 
-    // Если fade transition включен, используем плавный переход
     if (config.transition) {
       this.updateWithFadeTransition(config);
     } else {
-      // Обычное мгновенное обновление
       this.destroy();
       this.init(this.el as HTMLCanvasElement, config);
     }
