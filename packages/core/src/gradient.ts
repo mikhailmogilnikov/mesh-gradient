@@ -28,6 +28,12 @@ import * as CONSTANTS from './constants';
  * Manages WebGL rendering of animated gradient effects
  */
 export class MeshGradient {
+  /**
+   * Initialize the gradient
+   * @param selector - The selector for the canvas element or the canvas element itself
+   * @param options - The options for the gradient
+   * @returns The gradient instance
+   */
   public init!: (selector?: string | HTMLCanvasElement, options?: MeshGradientOptions) => MeshGradient;
 
   private el?: HTMLCanvasElement | null;
@@ -252,19 +258,6 @@ export class MeshGradient {
   }
 
   /**
-   * Updates noise frequency over time for animation
-   * @param e - Frequency delta
-   */
-  public updateFrequency(e: number) {
-    this.freqX += e;
-    this.freqY += e;
-  }
-
-  public toggleColor(index: number) {
-    this.activeColors[index] = this.activeColors[index] === 0 ? 1 : 0;
-  }
-
-  /**
    * Manually start gradient animation
    */
   public play(): void {
@@ -281,27 +274,6 @@ export class MeshGradient {
     if (!this.conf) return;
 
     this.conf.playing = false;
-  }
-
-  /**
-   * Enable or disable auto-pause when gradient goes out of viewport
-   * @param enabled - Whether to enable auto-pause functionality
-   */
-  public setAutoPause(enabled: boolean): void {
-    this.autoPauseOnInvisible = enabled;
-
-    if (!enabled && this.intersectionObserver) {
-      // If disabled, disconnect observer and resume if was paused by auto-pause
-      this.intersectionObserver.disconnect();
-      this.intersectionObserver = undefined;
-      if (!this.isIntersecting && this.wasPlayingBeforeInvisible) {
-        this.play();
-        this.wasPlayingBeforeInvisible = false;
-      }
-    } else if (enabled && this.el && !this.intersectionObserver) {
-      // If enabled and canvas exists, reinitialize observer
-      this.initIntersectionObserver();
-    }
   }
 
   /**
@@ -776,4 +748,36 @@ export class MeshGradient {
       .filter((color): color is number => color !== null)
       .map((colorValue) => normalizeColor(colorValue));
   }
+
+  /**
+   * Updates noise frequency over time for animation
+   * @param e - Frequency delta
+   */
+  // public updateFrequency(e: number) {
+  //   this.freqX += e;
+  //   this.freqY += e;
+  // }
+
+  // public toggleColor(index: number) {
+  //   this.activeColors[index] = this.activeColors[index] === 0 ? 1 : 0;
+  // }
+
+  /**
+   * Enable or disable auto-pause when gradient goes out of viewport
+   * @param enabled - Whether to enable auto-pause functionality
+   */
+  // public setAutoPause(enabled: boolean): void {
+  //   this.autoPauseOnInvisible = enabled;
+
+  //   if (!enabled && this.intersectionObserver) {
+  //     this.intersectionObserver.disconnect();
+  //     this.intersectionObserver = undefined;
+  //     if (!this.isIntersecting && this.wasPlayingBeforeInvisible) {
+  //       this.play();
+  //       this.wasPlayingBeforeInvisible = false;
+  //     }
+  //   } else if (enabled && this.el && !this.intersectionObserver) {
+  //     this.initIntersectionObserver();
+  //   }
+  // }
 }
