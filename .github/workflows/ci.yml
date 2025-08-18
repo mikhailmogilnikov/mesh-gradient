@@ -1,31 +1,31 @@
 name: CI
- 
+
 on:
   push:
-    branches: ["prod"]
+    branches: ['main']
   pull_request:
     types: [opened, synchronize]
- 
+
 jobs:
   build:
     name: Build and Test
     timeout-minutes: 15
     runs-on: ubuntu-latest
- 
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
- 
+
       - name: Setup pnpm environment
         uses: pnpm/action-setup@v4
         with:
           version: 9.0.0
- 
+
       - name: Install dependencies
         run: pnpm i
- 
+
       - name: Running build, lint and test
         run: pnpm build
         env:
@@ -35,7 +35,7 @@ jobs:
         run: pnpm lint
         env:
           CI: true
-      - name: Run check-types 
+      - name: Run check-types
         run: pnpm check-types
         env:
           CI: true
