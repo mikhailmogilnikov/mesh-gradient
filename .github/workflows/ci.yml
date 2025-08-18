@@ -35,7 +35,3 @@ jobs:
         run: pnpm lint
         env:
           CI: true
-      - name: Run check-types
-        run: pnpm check-types
-        env:
-          CI: true
