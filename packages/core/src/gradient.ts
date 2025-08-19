@@ -16,6 +16,8 @@ import type {
   AnimationFrameHandler,
   MeshGradientOptions,
   MeshGradientFadeTransitionConfig,
+  MeshGradientColorsConfig,
+  MeshGradientInitOptions,
 } from './types';
 
 import { normalizeColor, setProperty, parseHexColor } from './utils';
@@ -34,7 +36,7 @@ export class MeshGradient {
    * @param options - The options for the gradient
    * @returns The gradient instance
    */
-  public init!: (selector?: string | HTMLCanvasElement, options?: MeshGradientOptions) => MeshGradient;
+  public init!: (selector?: string | HTMLCanvasElement, options?: MeshGradientOptions & MeshGradientInitOptions) => MeshGradient;
 
   private el?: HTMLCanvasElement | null;
   private amp = CONSTANTS.DEFAULT_AMP;
@@ -71,6 +73,9 @@ export class MeshGradient {
   private shaderFiles?: ShaderFiles;
   private vertexShader?: string;
   private sectionColors?: Vec3[];
+  private configColors?: MeshGradientColorsConfig; // Colors from configuration with priority over CSS vars
+  private appearanceMode: 'smooth' | 'default' = 'smooth';
+  private appearanceDuration = 300;
   private computedCanvasStyle?: CSSStyleDeclaration;
   private conf?: GradientConfig;
   private uniforms?: Record<string, MiniGlUniform>;
@@ -191,6 +196,7 @@ export class MeshGradient {
     this.shaderFiles = undefined;
     this.vertexShader = undefined;
     this.sectionColors = undefined;
+    this.configColors = undefined;
     this.computedCanvasStyle = undefined;
     this.conf = undefined;
     this.scrollObserver = undefined;
@@ -301,6 +307,9 @@ export class MeshGradient {
     setProperty(this, 'shaderFiles', undefined);
     setProperty(this, 'vertexShader', undefined);
     setProperty(this, 'sectionColors', undefined);
+    setProperty(this, 'configColors', undefined);
+    setProperty(this, 'appearanceMode', 'smooth');
+    setProperty(this, 'appearanceDuration', 250);
     setProperty(this, 'computedCanvasStyle', undefined);
     setProperty(this, 'conf', undefined);
     setProperty(this, 'uniforms', undefined);
@@ -400,14 +409,41 @@ export class MeshGradient {
     setProperty(this, 'addIsLoadedClass', () => {
       if (!this.isLoadedClass) {
         this.isLoadedClass = true;
-        if (this.el) this.el.classList.add('isLoaded');
+
+        if (this.el) {
+          // Apply smooth appearance if enabled
+          if (this.appearanceMode === 'smooth') {
+            this.el.style.opacity = '0';
+            this.el.style.transition = `opacity ${this.appearanceDuration}ms ease-in-out`;
+
+            // Trigger smooth appearance
+            requestAnimationFrame(() => {
+              if (this.el) {
+                this.el.style.opacity = '1';
+              }
+            });
+
+            // Clean up transition after animation completes
+            setTimeout(() => {
+              if (this.el) {
+                this.el.style.transition = '';
+                this.el.style.opacity = '';
+              }
+            }, this.appearanceDuration);
+          }
+
+          this.el.classList.add('isLoaded');
+        }
+
         setTimeout(() => {
-          if (this.el && this.el.parentElement) this.el.parentElement.classList.add('isLoaded');
+          if (this.el && this.el.parentElement) {
+            this.el.parentElement.classList.add('isLoaded');
+          }
         }, CONSTANTS.LOADED_CLASS_DELAY);
       }
     });
 
-    setProperty(this, 'init', (selector: string | HTMLCanvasElement, options?: MeshGradientOptions) => {
+    setProperty(this, 'init', (selector: string | HTMLCanvasElement, options?: MeshGradientOptions & MeshGradientInitOptions) => {
       this.seed = options?.seed || Math.random() * 100;
       this.isStatic = options?.isStatic || false;
       this.resizeDelay = options?.resizeDelay || CONSTANTS.RESIZE_THROTTLE_DELAY;
@@ -428,6 +464,13 @@ export class MeshGradient {
       };
 
       this.activeColors = [activeColors[1] ? 1 : 0, activeColors[2] ? 1 : 0, activeColors[3] ? 1 : 0, activeColors[4] ? 1 : 0];
+
+      // Store colors from config with priority over CSS vars
+      this.configColors = options?.colors;
+
+      // Store appearance settings
+      this.appearanceMode = options?.appearance || 'smooth';
+      this.appearanceDuration = options?.transitionDuration || 250;
 
       this.pauseObserverOptions = {
         ...CONSTANTS.DEFAULT_PAUSE_OBSERVER_OPTIONS,
@@ -499,6 +542,11 @@ export class MeshGradient {
 
         this.width = rect.width;
         this.height = rect.height;
+
+        // Set initial opacity for smooth appearance
+        if (this.appearanceMode === 'smooth') {
+          this.el.style.opacity = '0';
+        }
 
         this.minigl = new MiniGl(this.el, null, null, true);
 
@@ -713,8 +761,17 @@ export class MeshGradient {
 
   /**
    * Waits for CSS variables to be loaded before initializing
+   * Skips waiting if colors are provided directly in config
    */
   private waitForCssVars() {
+    // If colors are provided in config, skip CSS variable waiting
+    if (this.configColors) {
+      this.initSystem();
+      this.addIsLoadedClass();
+
+      return;
+    }
+
     if (this.computedCanvasStyle && this.computedCanvasStyle.getPropertyValue(CONSTANTS.CSS_GRADIENT_VARS[0]).indexOf('#') !== -1) {
       this.initSystem();
       this.addIsLoadedClass();
@@ -732,9 +789,21 @@ export class MeshGradient {
   }
 
   /**
-   * Initialize gradient colors from CSS variables
+   * Initialize gradient colors from configuration or CSS variables
+   * Config colors have priority over CSS variables
    */
   private initGradientColors() {
+    // If colors are provided in config, use them with priority
+    if (this.configColors) {
+      this.sectionColors = this.configColors
+        .map((hexValue) => parseHexColor(hexValue))
+        .filter((color): color is number => color !== null)
+        .map((colorValue) => normalizeColor(colorValue));
+
+      return;
+    }
+
+    // Fallback to CSS variables
     const cssVars = CONSTANTS.CSS_GRADIENT_VARS;
 
     this.sectionColors = cssVars

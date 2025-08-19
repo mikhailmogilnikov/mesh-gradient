@@ -139,12 +139,7 @@ export interface MeshGradientToggleColorsConfig {
 /**
  * Colors in hex format.
  */
-export interface MeshGradientColorsConfig {
-  1: string;
-  2: string;
-  3: string;
-  4: string;
-}
+export type MeshGradientColorsConfig = [string, string, string, string];
 
 export interface MeshGradientFrequencyConfig {
   x?: number;
@@ -162,6 +157,20 @@ export interface MeshGradientFadeTransitionConfig {
   /**
    * Duration of fade transition in milliseconds
    * @default 250
+   */
+  transitionDuration?: number;
+}
+
+export interface MeshGradientInitOptions {
+  /**
+   * Appearance mode.
+   * @default 'smooth'
+   */
+  appearance?: 'smooth' | 'default';
+
+  /**
+   * Duration of appearance transition in milliseconds
+   * @default 300
    */
   transitionDuration?: number;
 }
