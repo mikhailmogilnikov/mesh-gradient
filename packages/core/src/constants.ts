@@ -36,6 +36,10 @@ export const DEFAULT_ACTIVE_TOGGLE_COLORS: MeshGradientToggleColorsConfig = {
   4: true,
 };
 
+export const DEFAULT_APPEARANCE_MODE = 'smooth';
+export const DEFAULT_APPEARANCE_DURATION = 300;
+export const DEFAULT_TRANSITION_DURATION = 300;
+
 // Noise and animation constants
 export const DEFAULT_AMP = 320;
 export const DEFAULT_SEED = 5;

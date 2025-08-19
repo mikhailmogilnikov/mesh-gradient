@@ -59,7 +59,7 @@ export class MeshGradient {
   private scrollingTimeout?: number;
   private scrollingRefreshDelay: number = CONSTANTS.SCROLLING_REFRESH_DELAY;
   private resizeTimeout?: number;
-  private resizeDelay: number = 300;
+  private resizeDelay: number = CONSTANTS.RESIZE_THROTTLE_DELAY;
   private isIntersecting: boolean = false;
   private isMetaKey = false;
   private wasPlayingBeforeInvisible = false; // Animation state before going out of viewport
@@ -74,8 +74,8 @@ export class MeshGradient {
   private vertexShader?: string;
   private sectionColors?: Vec3[];
   private configColors?: MeshGradientColorsConfig; // Colors from configuration with priority over CSS vars
-  private appearanceMode: 'smooth' | 'default' = 'smooth';
-  private appearanceDuration = 300;
+  private appearanceMode: 'smooth' | 'default' = CONSTANTS.DEFAULT_APPEARANCE_MODE;
+  private appearanceDuration = CONSTANTS.DEFAULT_APPEARANCE_DURATION;
   private computedCanvasStyle?: CSSStyleDeclaration;
   private conf?: GradientConfig;
   private uniforms?: Record<string, MiniGlUniform>;
@@ -208,12 +208,13 @@ export class MeshGradient {
    */
   public update(config: MeshGradientOptions & MeshGradientFadeTransitionConfig) {
     if (!this.el) return;
+    const transition = config.transition ?? true;
 
-    if (config.transition) {
+    if (transition) {
       this.updateWithFadeTransition(config);
     } else {
       this.destroy();
-      this.init(this.el as HTMLCanvasElement, config);
+      this.init(this.el as HTMLCanvasElement, { ...config, appearance: 'default' });
     }
   }
 
@@ -224,7 +225,7 @@ export class MeshGradient {
   private updateWithFadeTransition(config: MeshGradientOptions & MeshGradientFadeTransitionConfig) {
     if (!this.el) return;
 
-    const duration = config.transitionDuration || 250;
+    const duration = config.transitionDuration || CONSTANTS.DEFAULT_TRANSITION_DURATION;
     const canvas = this.el;
 
     const originalCanvas = canvas;
@@ -297,7 +298,7 @@ export class MeshGradient {
     setProperty(this, 'scrollingTimeout', undefined);
     setProperty(this, 'scrollingRefreshDelay', CONSTANTS.SCROLLING_REFRESH_DELAY);
     setProperty(this, 'resizeTimeout', undefined);
-    setProperty(this, 'resizeDelay', 300);
+    setProperty(this, 'resizeDelay', CONSTANTS.RESIZE_THROTTLE_DELAY);
     setProperty(this, 'isIntersecting', false);
     setProperty(this, 'isMetaKey', false);
 
@@ -469,8 +470,8 @@ export class MeshGradient {
       this.configColors = options?.colors;
 
       // Store appearance settings
-      this.appearanceMode = options?.appearance || 'smooth';
-      this.appearanceDuration = options?.transitionDuration || 250;
+      this.appearanceMode = options?.appearance || CONSTANTS.DEFAULT_APPEARANCE_MODE;
+      this.appearanceDuration = options?.appearanceDuration || CONSTANTS.DEFAULT_APPEARANCE_DURATION;
 
       this.pauseObserverOptions = {
         ...CONSTANTS.DEFAULT_PAUSE_OBSERVER_OPTIONS,
