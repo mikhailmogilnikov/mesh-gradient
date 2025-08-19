@@ -8,6 +8,7 @@
       "web-mesh-gradient"
     ]
   ],
+
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",

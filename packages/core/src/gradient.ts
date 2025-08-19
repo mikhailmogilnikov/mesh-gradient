@@ -12,7 +12,6 @@ import type {
   GradientConfig,
   ShaderFiles,
   EventHandler,
-  MouseEventHandler,
   AnimationFrameHandler,
   MeshGradientOptions,
   MeshGradientFadeTransitionConfig,
@@ -54,14 +53,11 @@ export class MeshGradient {
   private maxCssVarRetries: number = CONSTANTS.MAX_CSS_VAR_RETRIES;
   private angle: number = 0;
   private isLoadedClass: boolean = false;
-  // @ts-ignore
-  private isScrolling: boolean = false;
-  private scrollingTimeout?: number;
-  private scrollingRefreshDelay: number = CONSTANTS.SCROLLING_REFRESH_DELAY;
+
   private resizeTimeout?: number;
   private resizeDelay: number = CONSTANTS.RESIZE_THROTTLE_DELAY;
   private isIntersecting: boolean = false;
-  private isMetaKey = false;
+
   private wasPlayingBeforeInvisible = false; // Animation state before going out of viewport
   private intersectionObserver?: IntersectionObserver; // Observer for tracking visibility
   // @ts-ignore
@@ -69,7 +65,6 @@ export class MeshGradient {
   private width?: number;
   private height?: number;
 
-  private isMouseDown = false;
   private shaderFiles?: ShaderFiles;
   private vertexShader?: string;
   private sectionColors?: Vec3[];
@@ -88,12 +83,7 @@ export class MeshGradient {
 
   private xSegCount?: number;
   private ySegCount?: number;
-  private scrollObserver?: IntersectionObserver;
 
-  private handleScroll!: EventHandler;
-  private handleScrollEnd!: EventHandler;
-  private handleMouseDown!: MouseEventHandler;
-  private handleMouseUp!: EventHandler;
   private resize!: EventHandler;
 
   private animate!: AnimationFrameHandler;
@@ -109,12 +99,8 @@ export class MeshGradient {
    * This method should be called when the gradient is no longer needed
    */
   public destroy(): void {
-    // Stop animation and clear timeouts
+    // Stop animation
     this.pause();
-    if (this.scrollingTimeout) {
-      clearTimeout(this.scrollingTimeout);
-      this.scrollingTimeout = undefined;
-    }
     if (this.resizeTimeout) {
       clearTimeout(this.resizeTimeout);
       this.resizeTimeout = undefined;
@@ -199,7 +185,6 @@ export class MeshGradient {
     this.configColors = undefined;
     this.computedCanvasStyle = undefined;
     this.conf = undefined;
-    this.scrollObserver = undefined;
   }
 
   /**
@@ -294,15 +279,10 @@ export class MeshGradient {
     setProperty(this, 'maxCssVarRetries', CONSTANTS.MAX_CSS_VAR_RETRIES);
     setProperty(this, 'angle', 0);
     setProperty(this, 'isLoadedClass', false);
-    setProperty(this, 'isScrolling', false);
-    setProperty(this, 'scrollingTimeout', undefined);
-    setProperty(this, 'scrollingRefreshDelay', CONSTANTS.SCROLLING_REFRESH_DELAY);
+
     setProperty(this, 'resizeTimeout', undefined);
     setProperty(this, 'resizeDelay', CONSTANTS.RESIZE_THROTTLE_DELAY);
     setProperty(this, 'isIntersecting', false);
-    setProperty(this, 'isMetaKey', false);
-
-    setProperty(this, 'isMouseDown', false);
 
     // Rendering properties
     setProperty(this, 'shaderFiles', undefined);
@@ -325,13 +305,12 @@ export class MeshGradient {
 
     // Dimension properties
     setProperty(this, 'width', undefined);
-
     setProperty(this, 'height', undefined);
     setProperty(this, 'xSegCount', undefined);
     setProperty(this, 'ySegCount', undefined);
 
     // Effects properties
-    setProperty(this, 'scrollObserver', undefined);
+
     setProperty(this, 'amp', CONSTANTS.DEFAULT_AMP);
     setProperty(this, 'seed', CONSTANTS.DEFAULT_SEED);
     setProperty(this, 'freqX', CONSTANTS.DEFAULT_FREQ_X);
@@ -345,25 +324,6 @@ export class MeshGradient {
    * Set up all event handlers
    */
   private setupEventHandlers(): void {
-    // Scroll handler
-    setProperty(this, 'handleScroll', () => {
-      if (typeof this.scrollingTimeout !== 'undefined') {
-        clearTimeout(this.scrollingTimeout);
-      }
-      // @ts-ignore setTimeout returns number in browser
-      this.scrollingTimeout = window.setTimeout(this.handleScrollEnd, this.scrollingRefreshDelay);
-
-      if (this.conf && this.conf.playing) {
-        this.isScrolling = true;
-        this.pause();
-      }
-    });
-
-    setProperty(this, 'handleScrollEnd', () => {
-      this.isScrolling = false;
-      if (this.isIntersecting) this.play();
-    });
-
     setProperty(this, 'resize', () => {
       if (this.resizeTimeout) {
         clearTimeout(this.resizeTimeout);
@@ -375,21 +335,11 @@ export class MeshGradient {
       }, this.resizeDelay);
     });
 
-    setProperty(this, 'handleMouseDown', () => {});
-
-    setProperty(this, 'handleMouseUp', () => {
-      this.isMouseDown = false;
-    });
-
     setProperty(this, 'animate', (e: number) => {
-      if (!this.shouldSkipFrame(e) || this.isMouseDown) {
+      if (!this.shouldSkipFrame(e)) {
         this.t += Math.min(e - this.last, CONSTANTS.MAX_FRAME_DELTA);
         this.last = e;
-        if (this.isMouseDown) {
-          const delta = this.isMetaKey ? CONSTANTS.ANIMATION_DELTA_SLOW : CONSTANTS.ANIMATION_DELTA_FAST;
 
-          this.t += delta;
-        }
         if (this.mesh && this.mesh.material && this.mesh.material.uniforms && this.mesh.material.uniforms.u_time) {
           this.mesh.material.uniforms.u_time.value = this.t;
         }
@@ -402,7 +352,7 @@ export class MeshGradient {
         return;
       }
       this.frame += 1;
-      if ((this.conf && this.conf.playing) || this.isMouseDown) {
+      if (this.conf && this.conf.playing) {
         requestAnimationFrame(this.animate);
       }
     });
@@ -565,20 +515,13 @@ export class MeshGradient {
   }
 
   private disconnect() {
-    if (this.scrollObserver) {
-      window.removeEventListener('scroll', this.handleScroll);
-      window.removeEventListener('mousedown', this.handleMouseDown);
-      window.removeEventListener('mouseup', this.handleMouseUp);
-      window.removeEventListener('keydown', (this as unknown as { handleKeyDown: (event: KeyboardEvent) => void }).handleKeyDown);
-      this.scrollObserver.disconnect();
-    }
-
     // Disconnect intersection observer
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
       this.intersectionObserver = undefined;
     }
 
+    // Remove resize listener
     window.removeEventListener('resize', this.resize);
   }
 

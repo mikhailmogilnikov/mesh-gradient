@@ -4,7 +4,7 @@
   "author": "Mikhail Mogilnikov",
   "license": "MIT",
   "version": "1.0.0",
-  "homepage": "https://github.com/mikhailmogilnikov/mesh-gradient",
+  "homepage": "https://github.com/mikhailmogilnikov/web-mesh-gradient",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",

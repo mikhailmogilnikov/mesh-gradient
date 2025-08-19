@@ -1,13 +1,13 @@
 {
   "name": "web-mesh-gradient",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "The SwiftUI Mesh Gradient abstraction for web",
   "keywords": [
     "mesh-gradient"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mikhailmogilnikov/mesh-gradient.git",
+    "url": "git+https://github.com/mikhailmogilnikov/web-mesh-gradient.git",
     "directory": "packages/core"
   },
   "author": "Mikhail Mogilnikov",
