@@ -138,6 +138,7 @@ export interface MeshGradientToggleColorsConfig {
 
 /**
  * Colors in hex format.
+ * @example ['#ff0080', '#0080ff', '#80ff00', '#ff8000']
  */
 export type MeshGradientColorsConfig = [string, string, string, string];
 
