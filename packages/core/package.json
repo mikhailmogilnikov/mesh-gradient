@@ -1,6 +1,6 @@
 {
   "name": "web-mesh-gradient",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "The SwiftUI Mesh Gradient abstraction for web",
   "keywords": [
     "mesh-gradient"

@@ -49,8 +49,7 @@ export class MeshGradient {
   private autoPauseOnInvisible = true; // Auto pause when gradient goes out of viewport
 
   private minigl?: MiniGl;
-  private cssVarRetries: number = 0;
-  private maxCssVarRetries: number = CONSTANTS.MAX_CSS_VAR_RETRIES;
+
   private angle: number = 0;
   private isLoadedClass: boolean = false;
 
@@ -99,104 +98,23 @@ export class MeshGradient {
    * This method should be called when the gradient is no longer needed
    */
   public destroy(): void {
-    // Stop animation
-    this.pause();
-    if (this.resizeTimeout) {
-      clearTimeout(this.resizeTimeout);
-      this.resizeTimeout = undefined;
-    }
-
-    // Remove all event listeners
+    this.stopAnimationAndTimers();
     this.disconnect();
-
-    // Remove CSS classes
-    if (this.el) {
-      this.el.classList.remove('isLoaded');
-      if (this.el.parentElement) {
-        this.el.parentElement.classList.remove('isLoaded');
-      }
-    }
-
-    // Clean up WebGL resources
-    if (this.mesh) {
-      this.mesh.remove();
-      this.mesh = undefined;
-    }
-
-    if (this.minigl) {
-      // Clear all meshes from minigl
-      this.minigl.meshes.forEach((mesh) => {
-        if (mesh.remove) mesh.remove();
-      });
-      this.minigl.meshes = [];
-
-      // Clear WebGL context if possible
-      if (this.minigl.gl) {
-        const gl = this.minigl.gl;
-
-        // Clear the canvas completely
-        gl.clearColor(0.0, 0.0, 0.0, 0.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        // Delete buffers and shaders if material exists
-        if (this.material) {
-          if (this.material.vertexShader) {
-            gl.deleteShader(this.material.vertexShader);
-          }
-          if (this.material.fragmentShader) {
-            gl.deleteShader(this.material.fragmentShader);
-          }
-          if (this.material.program) {
-            gl.deleteProgram(this.material.program);
-          }
-        }
-
-        // Delete geometry buffers
-        if (this.geometry && this.geometry.attributes) {
-          Object.values(this.geometry.attributes).forEach((attribute) => {
-            if (attribute.buffer) {
-              gl.deleteBuffer(attribute.buffer);
-            }
-          });
-        }
-      }
-
-      // Additionally clear canvas using 2D context as fallback
-      if (this.minigl.canvas) {
-        const canvas = this.minigl.canvas;
-        const ctx = canvas.getContext('2d');
-
-        if (ctx) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-      }
-    }
-
-    // Clear all object references
-    this.el = null;
-    this.minigl = undefined;
-    this.mesh = undefined;
-    this.material = undefined;
-    this.geometry = undefined;
-    this.uniforms = undefined;
-    this.shaderFiles = undefined;
-    this.vertexShader = undefined;
-    this.sectionColors = undefined;
-    this.configColors = undefined;
-    this.computedCanvasStyle = undefined;
-    this.conf = undefined;
+    this.removeCssClasses();
+    this.cleanupWebGLResources();
+    this.clearObjectReferences();
   }
 
   /**
    * Updates the gradient with new configuration. Supports fade transition if enabled.
    * @param config - New configuration options
    */
-  public update(config: MeshGradientOptions & MeshGradientFadeTransitionConfig) {
+  public update(config?: MeshGradientOptions & MeshGradientFadeTransitionConfig) {
     if (!this.el) return;
-    const transition = config.transition ?? true;
+    const transition = config?.transition ?? true;
 
     if (transition) {
-      this.updateWithFadeTransition(config);
+      this.updateWithFadeTransition(config || {});
     } else {
       this.destroy();
       this.init(this.el as HTMLCanvasElement, { ...config, appearance: 'default' });
@@ -267,57 +185,206 @@ export class MeshGradient {
   }
 
   /**
+   * Enable or disable auto-pause when gradient goes out of viewport
+   * @param enabled - Whether to enable auto-pause functionality
+   */
+  public toggleAutoPause(enabled: boolean): void {
+    this.autoPauseOnInvisible = enabled;
+
+    if (!enabled && this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+      this.intersectionObserver = undefined;
+      if (!this.isIntersecting && this.wasPlayingBeforeInvisible) {
+        this.play();
+        this.wasPlayingBeforeInvisible = false;
+      }
+    } else if (enabled && this.el && !this.intersectionObserver) {
+      this.initIntersectionObserver();
+    }
+  }
+
+  /**
+   * Stops animation and clears all active timers
+   */
+  private stopAnimationAndTimers(): void {
+    this.pause();
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = undefined;
+    }
+  }
+
+  /**
+   * Removes CSS classes from canvas and its parent
+   */
+  private removeCssClasses(): void {
+    if (this.el) {
+      this.el.classList.remove('isLoaded');
+      if (this.el.parentElement) {
+        this.el.parentElement.classList.remove('isLoaded');
+      }
+    }
+  }
+
+  /**
+   * Cleans up all WebGL resources including shaders, buffers, and context
+   */
+  private cleanupWebGLResources(): void {
+    if (this.mesh) {
+      this.mesh.remove();
+      this.mesh = undefined;
+    }
+
+    if (!this.minigl) return;
+
+    this.cleanupMiniGlMeshes();
+    this.cleanupWebGLContext();
+    this.clearCanvasAsFallback();
+  }
+
+  /**
+   * Cleans up all meshes from MiniGL
+   */
+  private cleanupMiniGlMeshes(): void {
+    if (!this.minigl) return;
+
+    this.minigl.meshes.forEach((mesh) => {
+      if (mesh.remove) mesh.remove();
+    });
+    this.minigl.meshes = [];
+  }
+
+  /**
+   * Cleans up WebGL context, shaders and buffers
+   */
+  private cleanupWebGLContext(): void {
+    if (!this.minigl?.gl) return;
+
+    const gl = this.minigl.gl;
+
+    // Clear the canvas completely
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    this.deleteShaders(gl);
+    this.deleteBuffers(gl);
+  }
+
+  /**
+   * Deletes shaders and program from WebGL context
+   */
+  private deleteShaders(gl: WebGLRenderingContext): void {
+    if (!this.material) return;
+
+    if (this.material.vertexShader) {
+      gl.deleteShader(this.material.vertexShader);
+    }
+    if (this.material.fragmentShader) {
+      gl.deleteShader(this.material.fragmentShader);
+    }
+    if (this.material.program) {
+      gl.deleteProgram(this.material.program);
+    }
+  }
+
+  /**
+   * Deletes geometry buffers from WebGL context
+   */
+  private deleteBuffers(gl: WebGLRenderingContext): void {
+    if (!this.geometry?.attributes) return;
+
+    Object.values(this.geometry.attributes).forEach((attribute) => {
+      if (attribute.buffer) {
+        gl.deleteBuffer(attribute.buffer);
+      }
+    });
+  }
+
+  /**
+   * Clears canvas using 2D context as fallback
+   */
+  private clearCanvasAsFallback(): void {
+    if (!this.minigl?.canvas) return;
+
+    const canvas = this.minigl.canvas;
+    const ctx = canvas.getContext('2d');
+
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  /**
+   * Clears all object references to prevent memory leaks
+   */
+  private clearObjectReferences(): void {
+    this.el = null;
+    this.minigl = undefined;
+    this.mesh = undefined;
+    this.material = undefined;
+    this.geometry = undefined;
+    this.uniforms = undefined;
+    this.shaderFiles = undefined;
+    this.vertexShader = undefined;
+    this.sectionColors = undefined;
+    this.configColors = undefined;
+    this.computedCanvasStyle = undefined;
+    this.conf = undefined;
+  }
+
+  /**
    * Initialize all gradient properties with default values
+   * Uses Object.assign for better performance than multiple setProperty calls
    */
   private initializeProperties(): void {
-    // Core properties
-    setProperty(this, 'el', undefined);
-    setProperty(this, 'minigl', undefined);
+    const defaultProperties = {
+      // Core properties
+      el: undefined as HTMLCanvasElement | null | undefined,
+      minigl: undefined as MiniGl | undefined,
 
-    // State properties
-    setProperty(this, 'cssVarRetries', 0);
-    setProperty(this, 'maxCssVarRetries', CONSTANTS.MAX_CSS_VAR_RETRIES);
-    setProperty(this, 'angle', 0);
-    setProperty(this, 'isLoadedClass', false);
+      // State properties
+      angle: 0,
+      isLoadedClass: false,
+      resizeTimeout: undefined as number | undefined,
+      resizeDelay: CONSTANTS.RESIZE_THROTTLE_DELAY,
+      isIntersecting: false,
 
-    setProperty(this, 'resizeTimeout', undefined);
-    setProperty(this, 'resizeDelay', CONSTANTS.RESIZE_THROTTLE_DELAY);
-    setProperty(this, 'isIntersecting', false);
+      // Rendering properties
+      shaderFiles: undefined as ShaderFiles | undefined,
+      vertexShader: undefined as string | undefined,
+      sectionColors: undefined as Vec3[] | undefined,
+      configColors: undefined as MeshGradientColorsConfig | undefined,
+      appearanceMode: CONSTANTS.DEFAULT_APPEARANCE_MODE as 'smooth' | 'default',
+      appearanceDuration: CONSTANTS.DEFAULT_APPEARANCE_DURATION,
+      computedCanvasStyle: undefined as CSSStyleDeclaration | undefined,
+      conf: undefined as GradientConfig | undefined,
+      uniforms: undefined as Record<string, MiniGlUniform> | undefined,
+      mesh: undefined as MiniGlMesh | undefined,
+      material: undefined as MiniGlMaterial | undefined,
+      geometry: undefined as MiniGlPlaneGeometry | undefined,
 
-    // Rendering properties
-    setProperty(this, 'shaderFiles', undefined);
-    setProperty(this, 'vertexShader', undefined);
-    setProperty(this, 'sectionColors', undefined);
-    setProperty(this, 'configColors', undefined);
-    setProperty(this, 'appearanceMode', 'smooth');
-    setProperty(this, 'appearanceDuration', 250);
-    setProperty(this, 'computedCanvasStyle', undefined);
-    setProperty(this, 'conf', undefined);
-    setProperty(this, 'uniforms', undefined);
-    setProperty(this, 'mesh', undefined);
-    setProperty(this, 'material', undefined);
-    setProperty(this, 'geometry', undefined);
+      // Animation properties
+      t: CONSTANTS.DEFAULT_TIME_VALUE,
+      last: 0,
+      frame: 0,
 
-    // Animation properties
-    setProperty(this, 't', CONSTANTS.DEFAULT_TIME_VALUE);
-    setProperty(this, 'last', 0);
-    setProperty(this, 'frame', 0);
+      // Dimension properties
+      width: undefined as number | undefined,
+      height: undefined as number | undefined,
+      xSegCount: undefined as number | undefined,
+      ySegCount: undefined as number | undefined,
 
-    // Dimension properties
-    setProperty(this, 'width', undefined);
-    setProperty(this, 'height', undefined);
-    setProperty(this, 'xSegCount', undefined);
-    setProperty(this, 'ySegCount', undefined);
+      // Effects properties
+      amp: CONSTANTS.DEFAULT_AMP,
+      seed: CONSTANTS.DEFAULT_SEED,
+      freqX: CONSTANTS.DEFAULT_FREQ_X,
+      freqY: CONSTANTS.DEFAULT_FREQ_Y,
+      freqDelta: CONSTANTS.DEFAULT_FREQ_DELTA,
+      activeColors: [...CONSTANTS.DEFAULT_ACTIVE_COLORS] as Vec4,
+      autoPauseOnInvisible: true,
+    };
 
-    // Effects properties
-
-    setProperty(this, 'amp', CONSTANTS.DEFAULT_AMP);
-    setProperty(this, 'seed', CONSTANTS.DEFAULT_SEED);
-    setProperty(this, 'freqX', CONSTANTS.DEFAULT_FREQ_X);
-    setProperty(this, 'freqY', CONSTANTS.DEFAULT_FREQ_Y);
-    setProperty(this, 'freqDelta', CONSTANTS.DEFAULT_FREQ_DELTA);
-    setProperty(this, 'activeColors', [...CONSTANTS.DEFAULT_ACTIVE_COLORS]);
-    setProperty(this, 'autoPauseOnInvisible', true);
+    Object.assign(this, defaultProperties);
   }
 
   /**
@@ -565,12 +632,30 @@ export class MeshGradient {
   private initMaterial(): InstanceType<MiniGl['Material']> {
     if (!this.minigl) throw new Error('MiniGl not initialized');
 
-    // Create typed reference for cleaner code
-    const minigl = this.minigl as unknown as {
-      Uniform: MiniGlUniformConstructor;
-    };
+    const minigl = this.minigl as unknown as { Uniform: MiniGlUniformConstructor };
 
     this.uniforms = {
+      ...this.createBasicUniforms(minigl),
+      ...this.createGlobalUniform(minigl),
+      ...this.createVertexDeformUniform(minigl),
+      ...this.createColorUniforms(minigl),
+    };
+
+    this.createWaveLayersUniforms(minigl);
+    this.buildVertexShader();
+
+    return new (this.minigl as unknown as { Material: MiniGlMaterialConstructor }).Material(
+      this.vertexShader!,
+      this.shaderFiles!.fragment,
+      this.uniforms,
+    );
+  }
+
+  /**
+   * Creates basic uniforms (time, shadow, darken, active colors)
+   */
+  private createBasicUniforms(minigl: { Uniform: MiniGlUniformConstructor }) {
+    return {
       u_time: new minigl.Uniform({ value: 0 }),
       u_shadow_power: new minigl.Uniform({ value: 5 }),
       u_darken_top: new minigl.Uniform({
@@ -580,6 +665,14 @@ export class MeshGradient {
         value: this.activeColors,
         type: 'vec4',
       }),
+    };
+  }
+
+  /**
+   * Creates global uniform with noise frequency and speed settings
+   */
+  private createGlobalUniform(minigl: { Uniform: MiniGlUniformConstructor }) {
+    return {
       u_global: new minigl.Uniform({
         value: {
           noiseFreq: new minigl.Uniform({
@@ -590,6 +683,14 @@ export class MeshGradient {
         },
         type: 'struct',
       }),
+    };
+  }
+
+  /**
+   * Creates vertex deformation uniform for geometry animation
+   */
+  private createVertexDeformUniform(minigl: { Uniform: MiniGlUniformConstructor }) {
+    return {
       u_vertDeform: new minigl.Uniform({
         value: {
           incline: new minigl.Uniform({
@@ -609,6 +710,14 @@ export class MeshGradient {
         type: 'struct',
         excludeFrom: 'fragment',
       }),
+    };
+  }
+
+  /**
+   * Creates color uniforms for base color and wave layers
+   */
+  private createColorUniforms(minigl: { Uniform: MiniGlUniformConstructor }) {
+    return {
       u_baseColor: new minigl.Uniform({
         value: (this.sectionColors && this.sectionColors[0]) || [1, 0, 0],
         type: 'vec3',
@@ -620,21 +729,25 @@ export class MeshGradient {
         type: 'array',
       }),
     };
+  }
 
-    for (let e = 1; e < (this.sectionColors ? this.sectionColors.length : 1); e += 1) {
-      (this.uniforms!.u_waveLayers.value as MiniGlUniform[]).push(
+  /**
+   * Creates wave layers uniforms for multi-color gradient effects
+   */
+  private createWaveLayersUniforms(minigl: { Uniform: MiniGlUniformConstructor }): void {
+    if (!this.uniforms || !this.sectionColors) return;
+
+    for (let e = 1; e < this.sectionColors.length; e += 1) {
+      (this.uniforms.u_waveLayers.value as MiniGlUniform[]).push(
         new minigl.Uniform({
           type: 'struct',
           value: {
             color: new minigl.Uniform({
-              value: this.sectionColors ? this.sectionColors[e] : [1, 1, 1],
+              value: this.sectionColors[e],
               type: 'vec3',
             }),
             noiseFreq: new minigl.Uniform({
-              value: [
-                2 + e / (this.sectionColors ? this.sectionColors.length : 1),
-                3 + e / (this.sectionColors ? this.sectionColors.length : 1),
-              ],
+              value: [2 + e / this.sectionColors.length, 3 + e / this.sectionColors.length],
               type: 'vec2',
             }),
             noiseSpeed: new minigl.Uniform({
@@ -654,14 +767,13 @@ export class MeshGradient {
         }),
       );
     }
+  }
 
+  /**
+   * Builds vertex shader by combining noise, blend, and vertex shader files
+   */
+  private buildVertexShader(): void {
     this.vertexShader = [this.shaderFiles!.noise, this.shaderFiles!.blend, this.shaderFiles!.vertex].join('\n\n');
-
-    return new (this.minigl as unknown as { Material: MiniGlMaterialConstructor }).Material(
-      this.vertexShader,
-      this.shaderFiles!.fragment,
-      this.uniforms,
-    );
   }
 
   /**
@@ -705,9 +817,9 @@ export class MeshGradient {
 
   /**
    * Waits for CSS variables to be loaded before initializing
-   * Skips waiting if colors are provided directly in config
+   * Uses Promise-based approach with timeout instead of recursive retries
    */
-  private waitForCssVars() {
+  private async waitForCssVars(): Promise<void> {
     // If colors are provided in config, skip CSS variable waiting
     if (this.configColors) {
       this.initSystem();
@@ -716,20 +828,73 @@ export class MeshGradient {
       return;
     }
 
-    if (this.computedCanvasStyle && this.computedCanvasStyle.getPropertyValue(CONSTANTS.CSS_GRADIENT_VARS[0]).indexOf('#') !== -1) {
+    // Check if CSS vars are already available
+    if (this.areCssVarsLoaded()) {
       this.initSystem();
       this.addIsLoadedClass();
-    } else {
-      this.cssVarRetries += 1;
-      if (this.cssVarRetries > this.maxCssVarRetries) {
-        // Use fallback colors if CSS vars not available
-        this.sectionColors = CONSTANTS.DEFAULT_FALLBACK_COLORS.map((n) => normalizeColor(n));
-        this.initSystem();
 
-        return;
-      }
-      requestAnimationFrame(() => this.waitForCssVars());
+      return;
     }
+
+    // Wait for CSS vars with timeout
+    try {
+      await this.pollForCssVars();
+      this.initSystem();
+      this.addIsLoadedClass();
+    } catch {
+      // Fallback to default colors if timeout
+      this.useFallbackColors();
+      this.initSystem();
+    }
+  }
+
+  /**
+   * Checks if CSS variables are loaded and contain valid color values
+   */
+  private areCssVarsLoaded(): boolean {
+    return Boolean(
+      this.computedCanvasStyle && this.computedCanvasStyle.getPropertyValue(CONSTANTS.CSS_GRADIENT_VARS[0]).indexOf('#') !== -1,
+    );
+  }
+
+  /**
+   * Polls for CSS variables with exponential backoff and timeout
+   */
+  private pollForCssVars(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const maxWaitTime = 3000; // 3 seconds timeout
+      const checkInterval = 50; // Start with 50ms intervals
+      const startTime = Date.now();
+
+      const checkCssVars = () => {
+        if (this.areCssVarsLoaded()) {
+          resolve();
+
+          return;
+        }
+
+        if (Date.now() - startTime > maxWaitTime) {
+          reject(new Error('CSS variables timeout'));
+
+          return;
+        }
+
+        // Exponential backoff: increase interval gradually
+        const elapsed = Date.now() - startTime;
+        const interval = Math.min(checkInterval + elapsed / 20, 200);
+
+        setTimeout(checkCssVars, interval);
+      };
+
+      checkCssVars();
+    });
+  }
+
+  /**
+   * Uses fallback colors when CSS variables are not available
+   */
+  private useFallbackColors(): void {
+    this.sectionColors = CONSTANTS.DEFAULT_FALLBACK_COLORS.map((n) => normalizeColor(n));
   }
 
   /**
@@ -759,36 +924,4 @@ export class MeshGradient {
       .filter((color): color is number => color !== null)
       .map((colorValue) => normalizeColor(colorValue));
   }
-
-  /**
-   * Updates noise frequency over time for animation
-   * @param e - Frequency delta
-   */
-  // public updateFrequency(e: number) {
-  //   this.freqX += e;
-  //   this.freqY += e;
-  // }
-
-  // public toggleColor(index: number) {
-  //   this.activeColors[index] = this.activeColors[index] === 0 ? 1 : 0;
-  // }
-
-  /**
-   * Enable or disable auto-pause when gradient goes out of viewport
-   * @param enabled - Whether to enable auto-pause functionality
-   */
-  // public setAutoPause(enabled: boolean): void {
-  //   this.autoPauseOnInvisible = enabled;
-
-  //   if (!enabled && this.intersectionObserver) {
-  //     this.intersectionObserver.disconnect();
-  //     this.intersectionObserver = undefined;
-  //     if (!this.isIntersecting && this.wasPlayingBeforeInvisible) {
-  //       this.play();
-  //       this.wasPlayingBeforeInvisible = false;
-  //     }
-  //   } else if (enabled && this.el && !this.intersectionObserver) {
-  //     this.initIntersectionObserver();
-  //   }
-  // }
 }

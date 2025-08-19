@@ -1,5 +1,11 @@
 # web-mesh-gradient
 
+## 1.2.1
+
+### Patch Changes
+
+- 24222d3: refactor: gradient method decomposition
+
 ## 1.2.0
 
 ### Minor Changes
