@@ -486,7 +486,7 @@ export class MeshGradient {
         zoom: CONSTANTS.DEFAULT_ZOOM,
         rotation: CONSTANTS.DEFAULT_ROTATION,
         density: CONSTANTS.DEFAULT_DENSITY,
-        playing: !this.isStatic,
+        playing: true,
       };
 
       this.el = typeof selector === 'string' ? document.querySelector(selector) : selector;
