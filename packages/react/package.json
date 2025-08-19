@@ -44,7 +44,7 @@
     "lint:fix": "eslint . --fix"
   },
   "peerDependencies": {
-    "react": ">=0.0.2",
+    "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
   "dependencies": {
@@ -57,7 +57,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "react": "^0.0.2",
+    "react": "^19",
     "tsup": "^8",
     "turbo": "^2",
     "typescript": "^5"
