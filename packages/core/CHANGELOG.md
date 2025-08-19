@@ -1,5 +1,17 @@
 # web-mesh-gradient
 
+## 1.3.1
+
+### Patch Changes
+
+- introduce React wrapper
+
+## 1.3.0
+
+### Minor Changes
+
+- introducing React integration
+
 ## 1.2.1
 
 ### Patch Changes

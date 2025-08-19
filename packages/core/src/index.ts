@@ -5,5 +5,6 @@ export type {
   MeshGradientToggleColorsConfig,
   MeshGradientColorsConfig,
   MeshGradientFrequencyConfig,
-  MeshGradientFadeTransitionConfig,
+  MeshGradientUpdateOptions,
+  MeshGradientInitOptions,
 } from './types';

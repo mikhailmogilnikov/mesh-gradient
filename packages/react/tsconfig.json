@@ -1,0 +1,11 @@
+{
+  "extends": "@repo/ts-config/react-package.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "baseUrl": ".",
+    "rootDir": ".",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

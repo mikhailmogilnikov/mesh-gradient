@@ -15,7 +15,7 @@ A library for creating beautiful animated mesh gradients in the browser. Inspire
 ## 📦 Installation
 
 ```bash
-npm install web-mesh-gradient
+npm install @mesh-gradient/core
 ```
 
 ## 🚀 Quick Start

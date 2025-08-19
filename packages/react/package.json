@@ -1,14 +1,15 @@
 {
-  "name": "@mesh-gradient/core",
+  "name": "@mesh-gradient/react",
   "version": "1.3.1",
-  "description": "The SwiftUI Mesh Gradient abstraction for web",
+  "description": "The SwiftUI Mesh Gradient abstraction for React",
   "keywords": [
-    "mesh-gradient"
+    "mesh-gradient",
+    "react"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mikhailmogilnikov/web-mesh-gradient.git",
-    "directory": "packages/core"
+    "directory": "packages/react"
   },
   "author": "Mikhail Mogilnikov",
   "license": "MIT",
@@ -42,14 +43,24 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
+  "peerDependencies": {
+    "react": ">=0.0.2",
+    "react-dom": ">=18.0.0"
+  },
+  "dependencies": {
+    "@mesh-gradient/core": "workspace:*"
+  },
   "devDependencies": {
-    "@repo/tsup-config": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/ts-config": "workspace:*",
+    "@repo/tsup-config": "workspace:*",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "eslint": "^9",
+    "react": "^0.0.2",
+    "tsup": "^8",
     "turbo": "^2",
-    "typescript": "^5",
-    "tsup": "^8"
+    "typescript": "^5"
   },
   "packageManager": "pnpm@9.0.0"
 }

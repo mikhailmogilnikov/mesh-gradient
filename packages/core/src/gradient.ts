@@ -14,7 +14,7 @@ import type {
   EventHandler,
   AnimationFrameHandler,
   MeshGradientOptions,
-  MeshGradientFadeTransitionConfig,
+  MeshGradientUpdateOptions,
   MeshGradientColorsConfig,
   MeshGradientInitOptions,
 } from './types';
@@ -37,6 +37,7 @@ export class MeshGradient {
    */
   public init!: (selector?: string | HTMLCanvasElement, options?: MeshGradientOptions & MeshGradientInitOptions) => MeshGradient;
 
+  public isInitialized = false;
   private el?: HTMLCanvasElement | null;
   private amp = CONSTANTS.DEFAULT_AMP;
   private seed = CONSTANTS.DEFAULT_SEED;
@@ -103,13 +104,14 @@ export class MeshGradient {
     this.removeCssClasses();
     this.cleanupWebGLResources();
     this.clearObjectReferences();
+    this.isInitialized = false;
   }
 
   /**
    * Updates the gradient with new configuration. Supports fade transition if enabled.
    * @param config - New configuration options
    */
-  public update(config?: MeshGradientOptions & MeshGradientFadeTransitionConfig) {
+  public update(config?: MeshGradientOptions & MeshGradientUpdateOptions) {
     if (!this.el) return;
     const transition = config?.transition ?? true;
 
@@ -125,7 +127,7 @@ export class MeshGradient {
    * Updates gradient with smooth fade transition
    * @param config - New configuration options
    */
-  private updateWithFadeTransition(config: MeshGradientOptions & MeshGradientFadeTransitionConfig) {
+  private updateWithFadeTransition(config: MeshGradientOptions & MeshGradientUpdateOptions) {
     if (!this.el) return;
 
     const duration = config.transitionDuration || CONSTANTS.DEFAULT_TRANSITION_DURATION;
@@ -345,6 +347,7 @@ export class MeshGradient {
       // State properties
       angle: 0,
       isLoadedClass: false,
+      isInitialized: false,
       resizeTimeout: undefined as number | undefined,
       resizeDelay: CONSTANTS.RESIZE_THROTTLE_DELAY,
       isIntersecting: false,
@@ -570,6 +573,8 @@ export class MeshGradient {
 
         // Initialize intersection observer for auto-pause functionality
         this.initIntersectionObserver();
+
+        this.isInitialized = true;
 
         requestAnimationFrame(() => {
           if (this.el) {

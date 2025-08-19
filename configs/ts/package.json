@@ -2,7 +2,8 @@
   "name": "@repo/ts-config",
   "version": "1.0.0",
   "files": [
-    "pack.json"
+    "pack.json",
+    "react-package.json"
   ],
   "private": true,
   "type": "module",

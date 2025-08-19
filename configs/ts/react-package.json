@@ -1,0 +1,7 @@
+{
+  "extends": "./pack.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "moduleResolution": "node"
+  }
+}

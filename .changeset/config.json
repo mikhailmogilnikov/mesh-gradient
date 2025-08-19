@@ -5,7 +5,8 @@
   "fixed": [],
   "linked": [
     [
-      "web-mesh-gradient"
+      "@mesh-gradient/core",
+      "@mesh-gradient/react"
     ]
   ],
 

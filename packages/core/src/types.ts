@@ -148,7 +148,7 @@ export interface MeshGradientFrequencyConfig {
   delta?: number;
 }
 
-export interface MeshGradientFadeTransitionConfig {
+export interface MeshGradientUpdateOptions {
   /**
    * Enable fade transition when updating gradient
    * @default true
