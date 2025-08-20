@@ -1,0 +1,32 @@
+@import 'nextra-theme-docs/style.css';
+@import 'tailwindcss';
+
+@variant dark (&:where(.dark *));
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+}
+
+:root {
+  --background: #fff;
+  --primary: #000;
+  --secondary: #fff;
+  --accent: #000;
+  --muted: #000;
+  --border: #000;
+}
+
+.dark {
+  --background: #000;
+  --primary: #fff;
+  --secondary: #000;
+  --accent: #fff;
+  --muted: #fff;
+  --border: #fff;
+}
