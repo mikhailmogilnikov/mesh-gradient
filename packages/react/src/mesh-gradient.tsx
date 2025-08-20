@@ -1,3 +1,5 @@
+'use client';
+
 import { HTMLAttributes, useEffect, useRef } from 'react';
 import {
   MeshGradient as CoreMeshGradient,
@@ -9,7 +11,7 @@ import {
 import { useMeshGradient } from './use-mesh-gradient';
 
 export interface MeshGradientProps extends HTMLAttributes<HTMLCanvasElement> {
-  options: MeshGradientOptions & MeshGradientInitOptions & MeshGradientUpdateOptions;
+  options?: MeshGradientOptions & MeshGradientInitOptions & MeshGradientUpdateOptions;
   /**
    * Pause the gradient.
    */

@@ -7,6 +7,6 @@ export default {
   clean: true,
   target: 'es2020',
   outDir: 'dist',
-  treeshake: true,
+  treeshake: false,
   banner: { js: '"use client";' },
 };
