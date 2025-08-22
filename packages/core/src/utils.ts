@@ -1,4 +1,4 @@
-import type { Vec3 } from './types';
+import type { MeshGradientColorsConfig, Vec3 } from './types';
 
 /**
  * Converts HEX color to normalized RGB array (0-1)
@@ -91,3 +91,24 @@ export function parseHexColor(hexValue: string): number | null {
 
   return null;
 }
+
+/**
+ * Generates random colors in hex format
+ * @returns array of 4 random colors
+ */
+export const genRandomColors = (): MeshGradientColorsConfig => {
+  const colors = [];
+
+  for (let i = 0; i < 4; i++) {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+
+    // Конвертируем в hex формат
+    const hexColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+
+    colors.push(hexColor);
+  }
+
+  return colors as MeshGradientColorsConfig;
+};

@@ -223,4 +223,10 @@ export interface MeshGradientOptions {
    * Colors in hex format.
    */
   colors?: MeshGradientColorsConfig;
+
+  /**
+   * Fallback to CSS variables instead of random colors if colors are not provided.
+   * @default false
+   */
+  cssVariablesFallback?: boolean;
 }

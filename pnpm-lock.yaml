@@ -44,6 +44,12 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.1.12
         version: 4.1.12
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      color2k:
+        specifier: ^2.0.3
+        version: 2.0.3
       next:
         specifier: '15.3'
         version: 15.3.5(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -62,6 +68,9 @@ importers:
       react-dom:
         specifier: ^19.1.1
         version: 19.1.1(react@19.1.1)
+      react-icons:
+        specifier: ^5.5.0
+        version: 5.5.0(react@19.1.1)
       tailwindcss:
         specifier: ^4.1.12
         version: 4.1.12
@@ -1889,6 +1898,9 @@ packages:
 
   color-string@1.9.1:
     resolution: {integrity: sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==}
+
+  color2k@2.0.3:
+    resolution: {integrity: sha512-zW190nQTIoXcGCaU08DvVNFTmQhUpnJfVuAKfWqUQkflXKpaDdpaYoM0iluLS9lgJNHyBF58KKA2FBEwkD7wog==}
 
   color@4.2.3:
     resolution: {integrity: sha512-1rXeuUUiGGrykh+CeBdu5Ie7OJwinCgQY0bc7GCRxy5xVHy+moaqkpL/jqQq0MtQOeYcrqEz4abc5f0KtU7W4A==}
@@ -3802,6 +3814,11 @@ packages:
     resolution: {integrity: sha512-Dlq/5LAZgF0Gaz6yiqZCf6VCcZs1ghAJyrsu84Q/GT0gV+mCxbfmKNoGRKBYMJ8IEdGPqu49YWXD02GCknEDkw==}
     peerDependencies:
       react: ^19.1.1
+
+  react-icons@5.5.0:
+    resolution: {integrity: sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==}
+    peerDependencies:
+      react: '*'
 
   react-medium-image-zoom@5.3.0:
     resolution: {integrity: sha512-RCIzVlsKqy3BYgGgYbolUfuvx0aSKC7YhX/IJGEp+WJxsqdIVYJHkBdj++FAj6VD7RiWj6VVmdCfa/9vJE9hZg==}
@@ -6368,6 +6385,8 @@ snapshots:
       simple-swizzle: 0.2.2
     optional: true
 
+  color2k@2.0.3: {}
+
   color@4.2.3:
     dependencies:
       color-convert: 2.0.1
@@ -8812,6 +8831,10 @@ snapshots:
     dependencies:
       react: 19.1.1
       scheduler: 0.26.0
+
+  react-icons@5.5.0(react@19.1.1):
+    dependencies:
+      react: 19.1.1
 
   react-medium-image-zoom@5.3.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:

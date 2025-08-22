@@ -19,7 +19,7 @@ import type {
   MeshGradientInitOptions,
 } from './types';
 
-import { normalizeColor, setProperty, parseHexColor } from './utils';
+import { normalizeColor, setProperty, parseHexColor, genRandomColors } from './utils';
 import { MiniGl } from './minigl';
 import { SHADERS } from './shaders';
 import * as CONSTANTS from './constants';
@@ -486,8 +486,7 @@ export class MeshGradient {
 
       this.activeColors = [activeColors[1] ? 1 : 0, activeColors[2] ? 1 : 0, activeColors[3] ? 1 : 0, activeColors[4] ? 1 : 0];
 
-      // Store colors from config with priority over CSS vars
-      this.configColors = options?.colors;
+      this.configColors = options?.colors ?? (options?.cssVariablesFallback ? undefined : genRandomColors());
 
       // Store appearance settings
       this.appearanceMode = options?.appearance || CONSTANTS.DEFAULT_APPEARANCE_MODE;
@@ -903,8 +902,10 @@ export class MeshGradient {
   }
 
   /**
-   * Initialize gradient colors from configuration or CSS variables
-   * Config colors have priority over CSS variables
+   * Initialize gradient colors with fallback priority:
+   * 1. Colors from configuration (highest priority)
+   * 2. Colors from CSS variables
+   * 3. Random generated colors (fallback if neither above are available)
    */
   private initGradientColors() {
     // If colors are provided in config, use them with priority
@@ -928,5 +929,15 @@ export class MeshGradient {
       })
       .filter((color): color is number => color !== null)
       .map((colorValue) => normalizeColor(colorValue));
+
+    // Final fallback to random colors if no colors were found
+    if (!this.sectionColors || this.sectionColors.length === 0) {
+      const randomColors = genRandomColors();
+
+      this.sectionColors = randomColors
+        .map((hexValue) => parseHexColor(hexValue))
+        .filter((color): color is number => color !== null)
+        .map((colorValue) => normalizeColor(colorValue));
+    }
   }
 }
