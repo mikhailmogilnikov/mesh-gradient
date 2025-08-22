@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { LandingMesh } from '@/src/features/mesh/ui/landing-mesh';
+import { LandingMesh } from '@/src/features/mesh';
 
 export default function Home() {
   return (
@@ -14,7 +14,7 @@ export default function Home() {
             href='/docs'
             className=' bg-white/10 backdrop-blur-xl text-white font-medium px-4 py-2 rounded-full shadow-xl hover:bg-white/20 transition-all duration-300 hover:shadow-lg active:scale-95'
           >
-            Documetation
+            Get Started
           </Link>
         </div>
       </div>

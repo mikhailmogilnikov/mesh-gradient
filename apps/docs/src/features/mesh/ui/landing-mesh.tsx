@@ -2,8 +2,9 @@
 
 import { useMeshGradient } from '@mesh-gradient/react';
 import { useEffect, useRef } from 'react';
+import { MeshGradientColorsConfig } from '@mesh-gradient/core';
 
-import { ColorSet, getRandomColorSet, GradientColors } from '../model/colors';
+import { getRandomColorSet, GradientColors } from '../model/colors';
 
 export const LandingMesh = () => {
   const { instance } = useMeshGradient();
@@ -14,12 +15,12 @@ export const LandingMesh = () => {
     if (!instance || !ref.current) return;
 
     instance.init(ref.current, {
-      colors: GradientColors.purple as ColorSet,
+      colors: GradientColors.purple as MeshGradientColorsConfig,
     });
 
     setInterval(() => {
       instance.update({
-        colors: getRandomColorSet() as ColorSet,
+        colors: getRandomColorSet() as MeshGradientColorsConfig,
         transitionDuration: 400,
       });
     }, 4500);

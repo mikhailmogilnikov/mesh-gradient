@@ -15,6 +15,7 @@
 
 :root {
   --background: #fff;
+  --foreground: #000;
   --primary: #000;
   --secondary: #fff;
   --accent: #000;
@@ -24,9 +25,14 @@
 
 .dark {
   --background: #000;
+  --foreground: #fff;
   --primary: #fff;
   --secondary: #000;
   --accent: #fff;
   --muted: #fff;
   --border: #fff;
+}
+
+button {
+  cursor: pointer;
 }

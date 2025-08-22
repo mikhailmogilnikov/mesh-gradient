@@ -1,3 +1,5 @@
+import { MeshGradientColorsConfig } from '@mesh-gradient/core';
+
 export const GradientColors = {
   green: ['#043D5D', '#032E46', '#23B684', '#0F595E'],
   peach: ['#FE6860', '#FE8A71', '#D9BBAE', '#F3C9BF'],
@@ -30,7 +32,6 @@ export const GradientColors = {
 } as const;
 
 export type GradientColors = keyof typeof GradientColors;
-export type ColorSet = [string, string, string, string];
 
 const LandingColorSets = [
   GradientColors.oceanDream,
@@ -42,7 +43,7 @@ const LandingColorSets = [
 
 export const getRandomColorSet = () => {
   const randomIndex = Math.floor(Math.random() * LandingColorSets.length);
-  const randomColorSet = LandingColorSets[randomIndex] as ColorSet;
+  const randomColorSet = LandingColorSets[randomIndex] as MeshGradientColorsConfig;
 
   console.log(randomColorSet);
 

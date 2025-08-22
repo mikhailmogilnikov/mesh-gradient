@@ -2,7 +2,7 @@ import './globals.css';
 
 import { Head } from 'nextra/components';
 import { Viewport } from 'next';
-import { Footer, Layout, Navbar } from 'nextra-theme-docs';
+import { Layout, Navbar } from 'nextra-theme-docs';
 import { getPageMap } from 'nextra/page-map';
 
 export const metadata = {
@@ -16,13 +16,11 @@ export const viewport: Viewport = {
 
 const navbar = (
   <Navbar
-    logo={<b>Mesh Gradient</b>}
+    className='max-sm:px-4'
+    logo={<b className='text-lg'>Mesh Gradient</b>}
     projectLink='https://github.com/mikhailmogilnikov/web-mesh-gradient'
-    // ... Your additional navbar options
   />
 );
-
-const footer = <Footer className='py-6'>MIT {new Date().getFullYear()} © Mikhail Mogilnikov.</Footer>;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const pageMap = await getPageMap();
@@ -47,7 +45,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           editLink='Edit this page on GitHub'
           pageMap={pageMap}
           docsRepositoryBase='https://github.com/mikhailmogilnikov/web-mesh-gradient'
-          footer={footer}
           darkMode={true}
         >
           {children}
