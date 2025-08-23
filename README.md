@@ -2,9 +2,11 @@
 
 Apple-inspired animated **mesh gradient** for the web. Written fully on **TypeScript** and supercharged for **all modern frameworks**.
 
+![hero](apps/docs/public/mesh.png)
+
 ## Documentation
 
-Documentation website currently **WIP**
+Documetation website [available here.](https://web-mesh-gradient-docs.vercel.app)
 
 ## Packages
 
