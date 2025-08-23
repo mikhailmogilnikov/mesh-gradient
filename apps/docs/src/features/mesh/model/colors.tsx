@@ -45,7 +45,5 @@ export const getRandomColorSet = () => {
   const randomIndex = Math.floor(Math.random() * LandingColorSets.length);
   const randomColorSet = LandingColorSets[randomIndex] as MeshGradientColorsConfig;
 
-  console.log(randomColorSet);
-
   return randomColorSet;
 };
