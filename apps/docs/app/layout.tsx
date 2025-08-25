@@ -5,6 +5,7 @@ import { Viewport } from 'next';
 import { Layout, Navbar } from 'nextra-theme-docs';
 import { getPageMap } from 'nextra/page-map';
 import Link from 'next/link';
+import { Analytics } from '@vercel/analytics/next';
 
 import { openRunde } from '@/src/shared/assets/fonts/open-runde/open-runde';
 import { CONFIG } from '@/src/shared/model/config';
@@ -74,6 +75,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         >
           {children}
         </Layout>
+
+        <Analytics />
       </body>
     </html>
   );

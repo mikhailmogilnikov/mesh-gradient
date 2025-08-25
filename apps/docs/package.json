@@ -14,6 +14,7 @@
     "@mesh-gradient/react": "workspace:*",
     "@radix-ui/react-slider": "^1.3.6",
     "@tailwindcss/postcss": "^4.1.12",
+    "@vercel/analytics": "^1.5.0",
     "clsx": "^2.1.1",
     "color2k": "^2.0.3",
     "next": "15.3",
