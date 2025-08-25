@@ -23,7 +23,7 @@ export const MeshPlayground = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [transition, setTransition] = useState<false | undefined>(undefined);
   const [randomSeed, setRandomSeed] = useState(true);
-  const [animationSpeed, setAnimationSpeed] = useState(1);
+  const [animationSpeed, setAnimationSpeed] = useState<number | undefined>(undefined);
   const [localAnimationSpeed, setLocalAnimationSpeed] = useState(1);
 
   const { debouncedCallback: debouncedSetColors, cleanup: cleanupColors } = useDebounce(setColors);
@@ -80,9 +80,10 @@ export const MeshPlayground = () => {
   const handleAnimationSpeedChange = useCallback(
     (value: number[]) => {
       const newSpeed = value[0];
+      const newSpeedNormalized = newSpeed === 1 ? undefined : newSpeed;
 
       setLocalAnimationSpeed(newSpeed);
-      debouncedSetAnimationSpeed(newSpeed);
+      debouncedSetAnimationSpeed(newSpeedNormalized);
     },
     [debouncedSetAnimationSpeed],
   );
