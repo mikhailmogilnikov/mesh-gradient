@@ -15,7 +15,7 @@ export const LandingMesh = () => {
     if (!instance || !ref.current) return;
 
     instance.init(ref.current, {
-      colors: GradientColors.purple as MeshGradientColorsConfig,
+      colors: GradientColors.twilightPurple as MeshGradientColorsConfig,
     });
 
     const interval = setInterval(() => {

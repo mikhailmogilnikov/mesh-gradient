@@ -7,12 +7,16 @@ const meta: MetaRecord = {
   },
   index: 'Playground',
   introduction: 'Introduction',
+  ___: {
+    type: 'separator',
+    title: 'Usage',
+  },
   '---': {
     type: 'separator',
     title: 'Integrations',
   },
-  vanilla: 'Vanilla',
   react: 'React',
+  vue: 'Vue',
 };
 
 export default meta;
