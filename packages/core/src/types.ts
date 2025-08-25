@@ -150,13 +150,13 @@ export interface MeshGradientFrequencyConfig {
 
 export interface MeshGradientUpdateOptions {
   /**
-   * Enable fade transition when updating gradient
+   * Enable fade transition when updating gradient.
    * @default true
    */
   transition?: boolean;
 
   /**
-   * Duration of fade transition in milliseconds
+   * Duration of fade transition in milliseconds.
    * @default 300
    */
   transitionDuration?: number;
@@ -164,13 +164,13 @@ export interface MeshGradientUpdateOptions {
 
 export interface MeshGradientInitOptions {
   /**
-   * Appearance mode.
+   * Appearance mode. `smooth` enables smooth appearance transition when gradient is initialized.
    * @default 'smooth'
    */
   appearance?: 'smooth' | 'default';
 
   /**
-   * Duration of appearance transition in milliseconds
+   * Duration of appearance transition in milliseconds.
    * @default 300
    */
   appearanceDuration?: number;
@@ -178,7 +178,7 @@ export interface MeshGradientInitOptions {
 
 export interface MeshGradientOptions {
   /**
-   * Seed for the gradient.
+   * Seed for the gradient. It needs to generate the same gradient pattern on every page load.
    * @default random value
    */
   seed?: number;
@@ -202,7 +202,7 @@ export interface MeshGradientOptions {
   isStatic?: boolean;
 
   /**
-   * Auto pause when gradient goes out of viewport. Powered by Intersection Observer API.
+   * Auto pause when gradient goes out of viewport. Powered by `Intersection Observer` API.
    * @default true
    */
   pauseOnOutsideViewport?: boolean;
@@ -220,12 +220,22 @@ export interface MeshGradientOptions {
   resizeDelay?: number;
 
   /**
-   * Colors in hex format.
+   * Colors in hex format. Should be an array of 4 colors in hex format.
+   * @example ['#ff0080', '#0080ff', '#80ff00', '#ff8000']
    */
   colors?: MeshGradientColorsConfig;
 
   /**
    * Fallback to CSS variables instead of random colors if colors are not provided.
+   * @example
+   * ```css
+   * :root {
+   *   --mesh-gradient-color-1: #ff0080;
+   *   --mesh-gradient-color-2: #0080ff;
+   *   --mesh-gradient-color-3: #80ff00;
+   *   --mesh-gradient-color-4: #ff8000;
+   * }
+   * ```
    * @default false
    */
   cssVariablesFallback?: boolean;

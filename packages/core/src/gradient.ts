@@ -35,8 +35,12 @@ export class MeshGradient {
    * @param options - The options for the gradient
    * @returns The gradient instance
    */
-  public init!: (selector?: string | HTMLCanvasElement, options?: MeshGradientOptions & MeshGradientInitOptions) => MeshGradient;
+  public init!: (selector: string | HTMLCanvasElement, options?: MeshGradientOptions & MeshGradientInitOptions) => MeshGradient;
 
+  /**
+   * Whether the gradient is been initialized by calling `init` method.
+   * @default false
+   */
   public isInitialized = false;
   private el?: HTMLCanvasElement | null;
   private amp = CONSTANTS.DEFAULT_AMP;
@@ -95,7 +99,7 @@ export class MeshGradient {
   }
 
   /**
-   * Completely destroys the gradient and cleans up all resources
+   * Completely destroys the gradient and cleans up all resources.
    * This method should be called when the gradient is no longer needed
    */
   public destroy(): void {

@@ -15,15 +15,14 @@ export const metadata = {
 
 export const viewport: Viewport = {
   themeColor: '#000000',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 };
 
-const navbar = (
-  <Navbar
-    className='max-sm:px-4'
-    logo={<b className='text-lg'>Mesh Gradient</b>}
-    projectLink='https://github.com/mikhailmogilnikov/web-mesh-gradient'
-  />
-);
+const navbar = <Navbar className='max-sm:px-4' logo={<b className='text-lg'>Mesh Gradient</b>} projectLink={CONFIG.github} />;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const pageMap = await getPageMap();
@@ -35,6 +34,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           dark: '#000000',
         }}
       >
+        <meta name='apple-mobile-web-app-title' content='Mesh' />
+
         {/* Your additional tags should be passed as `children` of `<Head>` element */}
       </Head>
       <body className={openRunde.className}>
