@@ -18,7 +18,7 @@ import { useDebounce } from '@/src/shared/lib/useDebounce';
 export const MeshPlayground = () => {
   const { resolvedTheme } = useTheme();
 
-  const [colors, setColors] = useState<MeshGradientColorsConfig>(GradientColors.green as MeshGradientColorsConfig);
+  const [colors, setColors] = useState<MeshGradientColorsConfig>(GradientColors.sunrise as MeshGradientColorsConfig);
   const [activeColors, setActiveColors] = useState<MeshGradientToggleColorsConfig | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(true);
   const [transition, setTransition] = useState<false | undefined>(undefined);
@@ -146,7 +146,9 @@ export const MeshPlayground = () => {
           })}
         </div>
 
-        <p className='text-sm text-foreground/50 font-medium'>Click to line under the color to toggle its visibility</p>
+        <p className='text-sm text-foreground/50 font-medium'>
+          Tap to color to open color picker. Toggle line under the color for change its visibility.
+        </p>
 
         <div role='separator' className='h-px w-full bg-foreground/10' />
 
