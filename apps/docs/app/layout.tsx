@@ -4,6 +4,7 @@ import { Head } from 'nextra/components';
 import { Viewport } from 'next';
 import { Layout, Navbar } from 'nextra-theme-docs';
 import { getPageMap } from 'nextra/page-map';
+import Link from 'next/link';
 
 import { openRunde } from '@/src/shared/assets/fonts/open-runde/open-runde';
 import { CONFIG } from '@/src/shared/model/config';
@@ -24,6 +25,22 @@ export const viewport: Viewport = {
 
 const navbar = <Navbar className='max-sm:px-4' logo={<b className='text-lg'>Mesh Gradient</b>} projectLink={CONFIG.github} />;
 
+const Footer = () => (
+  <footer className='w-full h-20 px-6 flex items-center justify-center'>
+    <p className='text-sm text-foreground/50 font-medium text-balance text-center'>
+      Built by{' '}
+      <Link href='https://github.com/mikhailmogilnikov' target='_blank' className='underline'>
+        Mikhail Mogilnikov
+      </Link>
+      . Source code is available on{' '}
+      <Link href='https://github.com/mikhailmogilnikov/mesh-gradient' target='_blank' className='underline'>
+        GitHub
+      </Link>
+      .
+    </p>
+  </footer>
+);
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const pageMap = await getPageMap();
 
@@ -41,6 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={openRunde.className}>
         <Layout
           navbar={navbar}
+          footer={<Footer />}
           sidebar={{ defaultMenuCollapseLevel: 1 }}
           navigation={{
             prev: true,
