@@ -1,0 +1,78 @@
+# API
+
+What methods and properties are available in Mesh Gradient and how to use them.
+
+import { generateDefinition, TSDoc } from 'nextra/tsdoc'
+
+### MeshGradient
+
+The main instance API.
+
+```ts
+import { MeshGradient } from '@mesh-gradient/core';
+
+const gradient = new MeshGradient();
+```
+ 
+<TSDoc
+  definition={generateDefinition({
+    code: `
+import { MeshGradient } from '@mesh-gradient/core';
+type MeshGradientPublicAPI = Pick<MeshGradient, 'init' | 'update' | 'destroy' | 'play' | 'pause' | 'toggleAutoPause' | 'isInitialized'>;
+export default MeshGradientPublicAPI;
+`
+  })}
+/>
+
+<br />
+
+
+### MeshGradientOptions
+
+Options for `.init()` and `.update()` methods.
+
+```ts
+import { MeshGradientOptions } from '@mesh-gradient/core';
+
+const options: MeshGradientOptions = {
+  colors: ['#000000', '#ffffff', '#000000', '#ffffff'],
+};
+```
+<TSDoc
+  definition={generateDefinition({
+    code: `
+import { MeshGradientOptions } from '@mesh-gradient/core';
+export default MeshGradientOptions;
+`
+  })}
+/>
+
+<br />
+
+#### Init Options
+
+Type `MeshGradientInitOptions` contains additional options for `.init()` method. Not used in `.update()` method.
+
+<TSDoc
+  definition={generateDefinition({
+    code: `
+import { MeshGradientInitOptions } from '@mesh-gradient/core';
+export default MeshGradientInitOptions;
+`
+  })}
+/>
+
+<br />
+
+#### Update Options
+
+Type `MeshGradientUpdateOptions` contains additional options for `.update()` method.
+
+<TSDoc
+  definition={generateDefinition({
+    code: `
+import { MeshGradientUpdateOptions } from '@mesh-gradient/core';
+export default MeshGradientUpdateOptions;
+`
+  })}
+/>

@@ -1,0 +1,48 @@
+# Introduction
+
+<b>Mesh Gradient</b> is a library for creating stunning animated gradient effects. It uses hardware accelerated `WebGL` to render the gradient and is optimized for performance.
+
+## Motivation
+
+In 2021 [@jordienr](https://github.com/jordienr) and [@ndom91](https://github.com/ndom91) has been upload to GitHub gist a [Stripe landing page gradient effect](https://gist.github.com/jordienr/64bcf75f8b08641f205bd6a1a0d4ce1d). Guys has also created a [Whatamesh](https://whatamesh.vercel.app/) website to showcase this beautiful tool.
+
+However, the tool was one large file written in `JavaScript`, had unreadable code and structure, unused event listeners and pretty wierd type definitions.
+
+I decided to rewrite the tool from scratch in `TypeScript` and make it more readable and maintainable.
+
+### Key changes
+
+- ✅ Rewritten the tool from scratch in `TypeScript`
+- ✅ Integration with React and SSR
+- ✅ New Documentation website with [Playground](./)
+- ✅ Simplified API with full type definitions
+- ✅ Performance optimizations in core library (resize debounce, pause on out of viewport, remove unused event listeners, etc.)
+- ✅ Lot of new features and improvements in core library (randomly generated colors and seeds, smooth appearance, fade transition between 2 gradients out of the box, etc.)
+- ✅ Extended configuration for tool
+
+## How to use it?
+
+You can start using `Mesh Gradient` in your project in 2 ways:
+
+import { Cards } from 'nextra/components'
+import { SiTypescript, SiReact } from "react-icons/si";
+
+<Cards num={2}>
+  <Cards.Card
+    icon={<SiTypescript />}
+    title="Default implementation"
+    href="/docs/quick-start"
+    arrow
+  />
+  <Cards.Card
+    icon={<SiReact />}
+    title="React implementation"
+    href="/docs/react/quick-start"
+    arrow
+  />
+</Cards>
+
+
+
+
+

@@ -140,7 +140,10 @@ export const MeshPlayground = () => {
                 <div
                   id='color'
                   style={{ backgroundColor: color }}
-                  className='w-full h-10 rounded-full flex items-center justify-center transition-colors duration-300 relative'
+                  className={clsx(
+                    'w-full h-10 rounded-full flex items-center justify-center transition-[filter,background-color] duration-300 relative',
+                    isCurrentColorDisabled && 'grayscale',
+                  )}
                 >
                   <input
                     type='color'

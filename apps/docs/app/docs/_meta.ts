@@ -11,12 +11,14 @@ const meta: MetaRecord = {
     type: 'separator',
     title: 'Usage',
   },
+  'quick-start': 'Quick start',
+  'advanced-usage': 'Advanced usage',
+  api: 'API',
   '---': {
     type: 'separator',
     title: 'Integrations',
   },
   react: 'React',
-  vue: 'Vue',
 };
 
 export default meta;

@@ -35,7 +35,7 @@ export const CodeHighlighter = ({ code, language, theme = 'github-dark', classNa
 
   if (loading) {
     return (
-      <div className={`bg-foreground/10 p-4 rounded-2xl ${className}`}>
+      <div className={`bg-foreground/5 p-4 rounded-lg ${className}`}>
         <pre className='text-sm opacity-50'>Loading...</pre>
       </div>
     );

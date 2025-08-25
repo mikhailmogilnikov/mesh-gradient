@@ -26,7 +26,7 @@ export default function Home() {
             target='_blank'
             className='bg-zinc-900/50 h-12 w-12 flex items-center justify-center rounded-full shadow-xl hover:bg-zinc-800 transition-all duration-300 hover:shadow-lg active:scale-95 backdrop-blur-xl'
           >
-            <PiGithubLogoFill className='size-7' />
+            <PiGithubLogoFill className='size-7 text-white' />
           </Link>
         </div>
       </div>

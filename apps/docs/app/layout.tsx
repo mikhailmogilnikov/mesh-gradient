@@ -6,6 +6,7 @@ import { Layout, Navbar } from 'nextra-theme-docs';
 import { getPageMap } from 'nextra/page-map';
 
 import { openRunde } from '@/src/shared/assets/fonts/open-runde/open-runde';
+import { CONFIG } from '@/src/shared/model/config';
 
 export const metadata = {
   // Define your metadata here
@@ -44,9 +45,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             prev: true,
             next: true,
           }}
-          editLink='Edit this page on GitHub'
+          feedback={{
+            content: 'Leave feedback',
+          }}
+          editLink='Edit this page'
           pageMap={pageMap}
-          docsRepositoryBase='https://github.com/mikhailmogilnikov/web-mesh-gradient'
+          docsRepositoryBase={CONFIG.github}
           darkMode={true}
         >
           {children}
