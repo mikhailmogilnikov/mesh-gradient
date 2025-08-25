@@ -2,11 +2,31 @@
 
 <b>Mesh Gradient</b> is a library for creating stunning animated gradient effects. It uses hardware accelerated `WebGL` to render the gradient and is optimized for performance.
 
+## Key Features
+
+import { Callout } from 'nextra/components'
+
+<Callout emoji="🚀">
+**High Performance** - Hardware-accelerated WebGL rendering with optimized frame skipping and auto-pause when out of viewport.
+</Callout>
+
+<Callout emoji="⚡">
+**Zero Dependencies** - Lightweight core library (~8kb gzipped) with no external dependencies.
+</Callout>
+
+<Callout emoji="🎨">
+**Highly Customizable** - Control colors, animation speed, frequency, and appearance with extensive configuration options.
+</Callout>
+
+<Callout emoji="🔄">
+**Smooth Transitions** - Built-in fade transitions between gradient configurations with customizable duration.
+</Callout>
+
 ## Motivation
 
-In 2021 [@jordienr](https://github.com/jordienr) and [@ndom91](https://github.com/ndom91) has been upload to GitHub gist a [Stripe landing page gradient effect](https://gist.github.com/jordienr/64bcf75f8b08641f205bd6a1a0d4ce1d). Guys has also created a [Whatamesh](https://whatamesh.vercel.app/) website to showcase this beautiful tool.
+In 2021 [@jordienr](https://github.com/jordienr) and [@ndom91](https://github.com/ndom91) have uploaded to GitHub gist a [Stripe landing page gradient effect](https://gist.github.com/jordienr/64bcf75f8b08641f205bd6a1a0d4ce1d). They have also created a [Whatamesh](https://whatamesh.vercel.app/) website to showcase this beautiful tool.
 
-However, the tool was one large file written in `JavaScript`, had unreadable code and structure, unused event listeners and pretty wierd type definitions.
+However, the tool was one large file written in `JavaScript`, had unreadable code and structure, unused event listeners and pretty weird type definitions.
 
 I decided to rewrite the tool from scratch in `TypeScript` and make it more readable and maintainable.
 
@@ -16,9 +36,9 @@ I decided to rewrite the tool from scratch in `TypeScript` and make it more read
 - ✅ Integration with React and SSR
 - ✅ New Documentation website with [Playground](./)
 - ✅ Simplified API with full type definitions
-- ✅ Performance optimizations in core library (resize debounce, pause on out of viewport, remove unused event listeners, size for rendering context keep in sync with canvas size instead of `window` size, etc.)
-- ✅ Lot of new features and improvements in core library (randomly generated colors and seeds, smooth appearance, fade transition between 2 gradients out of the box, etc.)
-- ✅ Extended configuration for tool
+- ✅ Performance optimizations in core library (resize debounce, pause on out of viewport, removed unused event listeners, size for rendering context kept in sync with canvas size instead of `window` size, etc.)
+- ✅ A lot of new features and improvements in core library (animation speed, randomly generated colors and seeds, smooth appearance, fade transition between 2 gradients out of the box, etc.)
+- ✅ Extended configuration for the tool
 
 ## How to use it?
 
@@ -41,6 +61,12 @@ import { SiTypescript, SiReact } from "react-icons/si";
     arrow
   />
 </Cards>
+
+---
+
+<div className="text-center text-sm text-gray-600 dark:text-gray-400 mt-8">
+  Made with ❤️ by <a href="https://github.com/mikhailmogilnikov" target="_blank" rel="noopener">Mikhail Mogilnikov</a> • Licensed under MIT
+</div>
 
 
 

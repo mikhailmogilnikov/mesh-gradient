@@ -1,7 +1,7 @@
 'use client';
 
 import { MeshGradient } from '@mesh-gradient/react';
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { genRandomColors, MeshGradientColorsConfig, MeshGradientOptions, MeshGradientToggleColorsConfig } from '@mesh-gradient/core';
 import { readableColor } from 'color2k';
 import { PiPauseFill, PiPlayFill } from 'react-icons/pi';
@@ -11,6 +11,9 @@ import { useTheme } from 'nextra-theme-docs';
 import { GradientColors } from '../model/colors';
 
 import { CodeHighlighter } from '@/src/shared/ui/code-highlighter';
+import { Slider } from '@/src/shared/ui/slider';
+import { formatObjectAsJS } from '@/src/shared/lib/formatObj';
+import { useDebounce } from '@/src/shared/lib/useDebounce';
 
 export const MeshPlayground = () => {
   const { resolvedTheme } = useTheme();
@@ -20,8 +23,11 @@ export const MeshPlayground = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [transition, setTransition] = useState<false | undefined>(undefined);
   const [randomSeed, setRandomSeed] = useState(true);
+  const [animationSpeed, setAnimationSpeed] = useState(1);
+  const [localAnimationSpeed, setLocalAnimationSpeed] = useState(1);
 
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const { debouncedCallback: debouncedSetColors, cleanup: cleanupColors } = useDebounce(setColors);
+  const { debouncedCallback: debouncedSetAnimationSpeed, cleanup: cleanupAnimationSpeed } = useDebounce(setAnimationSpeed);
 
   const handleToggleColor = useCallback(
     (index: number) => {
@@ -66,64 +72,32 @@ export const MeshPlayground = () => {
 
       newColors[index] = e.target.value;
 
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-
-      debounceRef.current = setTimeout(() => {
-        setColors(newColors);
-      }, 150);
+      debouncedSetColors(newColors);
     },
-    [colors],
+    [colors, debouncedSetColors],
+  );
+
+  const handleAnimationSpeedChange = useCallback(
+    (value: number[]) => {
+      const newSpeed = value[0];
+
+      setLocalAnimationSpeed(newSpeed);
+      debouncedSetAnimationSpeed(newSpeed);
+    },
+    [debouncedSetAnimationSpeed],
   );
 
   useEffect(() => {
     return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
+      cleanupColors();
+      cleanupAnimationSpeed();
     };
-  }, []);
+  }, [cleanupColors, cleanupAnimationSpeed]);
 
   const meshOptions: MeshGradientOptions = useMemo(
-    () => ({ colors, transition, seed: randomSeed ? undefined : 5, activeColors }),
-    [colors, transition, randomSeed, activeColors],
+    () => ({ colors, transition, seed: randomSeed ? undefined : 5, activeColors, animationSpeed }),
+    [colors, transition, randomSeed, activeColors, animationSpeed],
   );
-
-  const formatObjectAsJS = (obj: any, indent = 2): string => {
-    const spaces = ' '.repeat(indent);
-    const parentSpaces = ' '.repeat(Math.max(0, indent - 2));
-    const entries = Object.entries(obj)
-      .filter(([, value]) => value !== undefined)
-      .map(([key, value]) => {
-        if (Array.isArray(value)) {
-          const formattedArray = `[\n${value.map((item) => `${spaces}  "${item}"`).join(',\n')}\n${spaces}]`;
-
-          return `${spaces}${key}: ${formattedArray}`;
-        }
-
-        if (typeof value === 'object' && value !== null) {
-          const nestedSpaces = ' '.repeat(indent + 2);
-          const nestedEntries = Object.entries(value).map(([nestedKey, nestedValue]) => {
-            if (typeof nestedValue === 'string') {
-              return `${nestedSpaces}${nestedKey}: "${nestedValue}"`;
-            }
-
-            return `${nestedSpaces}${nestedKey}: ${nestedValue}`;
-          });
-
-          return `${spaces}${key}: {\n${nestedEntries.join(',\n')}\n${spaces}}`;
-        }
-
-        if (typeof value === 'string') {
-          return `${spaces}${key}: "${value}"`;
-        }
-
-        return `${spaces}${key}: ${value}`;
-      });
-
-    return `{\n${entries.join(',\n')}\n${parentSpaces}}`;
-  };
 
   return (
     <div>
@@ -173,7 +147,7 @@ export const MeshPlayground = () => {
 
         <p className='text-sm text-foreground/50 font-medium'>Click to line under the color to toggle its visibility</p>
 
-        <div className='h-px w-full bg-foreground/10' />
+        <div role='separator' className='h-px w-full bg-foreground/10' />
 
         <div className='flex gap-2'>
           <button onClick={() => setColors(genRandomColors())} className='bg-foreground/10 px-4 h-12 rounded-full w-full font-medium'>
@@ -211,8 +185,27 @@ export const MeshPlayground = () => {
           </button>
         </div>
 
-        <div className='mt-2'>
-          <p className='text-base mb-2 font-medium'>Output configuration:</p>
+        <div className='flex flex-col gap-3 mt-2'>
+          <div className='flex items-center justify-between'>
+            <p className='text-base font-medium'>Animation speed</p>
+
+            <p className='text-sm text-foreground/50 font-medium'>{localAnimationSpeed}</p>
+          </div>
+
+          <Slider
+            min={0.1}
+            max={10}
+            step={0.1}
+            value={[localAnimationSpeed]}
+            onValueChange={handleAnimationSpeedChange}
+            className='w-full'
+          />
+        </div>
+
+        <div role='separator' className='h-px w-full bg-foreground/10 my-4' />
+
+        <div className=''>
+          <p className='text-lg mb-2 font-semibold'>Output configuration:</p>
           <CodeHighlighter
             className='bg-foreground/5'
             code={`import { type MeshGradientOptions } from '@mesh-gradient/core';
@@ -222,6 +215,9 @@ const options: MeshGradientOptions = ${formatObjectAsJS(meshOptions)};;`}
             theme={`github-${resolvedTheme}`}
           />
         </div>
+        <p className='text-sm text-foreground/50 font-medium'>
+          You can paste this configuration to any <b>MeshGradient</b> instance or component in your project.
+        </p>
       </div>
     </div>
   );
