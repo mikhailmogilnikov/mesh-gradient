@@ -5,6 +5,7 @@ export const DEFAULT_TIME_VALUE = 1253106;
 export const MAX_FRAME_DELTA = 1000 / 15; // 15 FPS limit
 export const ANIMATION_DELTA_FAST = 160;
 export const ANIMATION_DELTA_SLOW = -160;
+export const DEFAULT_ANIMATION_SPEED = 1.0;
 
 // CSS and styling constants
 export const MAX_CSS_VAR_RETRIES = 200;

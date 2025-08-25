@@ -51,6 +51,7 @@ export class MeshGradient {
   private freqDelta = CONSTANTS.DEFAULT_FREQ_DELTA;
   private activeColors: Vec4 = CONSTANTS.DEFAULT_ACTIVE_COLORS;
   private isStatic = false;
+  private animationSpeed = CONSTANTS.DEFAULT_ANIMATION_SPEED;
   private autoPauseOnInvisible = true; // Auto pause when gradient goes out of viewport
 
   private minigl?: MiniGl;
@@ -188,6 +189,25 @@ export class MeshGradient {
     if (!this.conf) return;
 
     this.conf.playing = false;
+  }
+
+  /**
+   * Set animation speed multiplier
+   * @param speed - Speed multiplier (1.0 is normal speed, 0.5 is half speed, 2.0 is double speed)
+   */
+  public setAnimationSpeed(speed: number): void {
+    if (speed <= 0) {
+      throw new Error('Animation speed must be greater than 0');
+    }
+    this.animationSpeed = speed;
+  }
+
+  /**
+   * Get current animation speed multiplier
+   * @returns Current animation speed
+   */
+  public getAnimationSpeed(): number {
+    return this.animationSpeed;
   }
 
   /**
@@ -388,6 +408,7 @@ export class MeshGradient {
       freqY: CONSTANTS.DEFAULT_FREQ_Y,
       freqDelta: CONSTANTS.DEFAULT_FREQ_DELTA,
       activeColors: [...CONSTANTS.DEFAULT_ACTIVE_COLORS] as Vec4,
+      animationSpeed: CONSTANTS.DEFAULT_ANIMATION_SPEED,
       autoPauseOnInvisible: true,
     };
 
@@ -411,7 +432,7 @@ export class MeshGradient {
 
     setProperty(this, 'animate', (e: number) => {
       if (!this.shouldSkipFrame(e)) {
-        this.t += Math.min(e - this.last, CONSTANTS.MAX_FRAME_DELTA);
+        this.t += Math.min(e - this.last, CONSTANTS.MAX_FRAME_DELTA) * this.animationSpeed;
         this.last = e;
 
         if (this.mesh && this.mesh.material && this.mesh.material.uniforms && this.mesh.material.uniforms.u_time) {
@@ -471,6 +492,7 @@ export class MeshGradient {
     setProperty(this, 'init', (selector: string | HTMLCanvasElement, options?: MeshGradientOptions & MeshGradientInitOptions) => {
       this.seed = options?.seed || Math.random() * 100;
       this.isStatic = options?.isStatic || false;
+      this.animationSpeed = options?.animationSpeed || CONSTANTS.DEFAULT_ANIMATION_SPEED;
       this.resizeDelay = options?.resizeDelay || CONSTANTS.RESIZE_THROTTLE_DELAY;
 
       if (typeof options?.frequency === 'number') {

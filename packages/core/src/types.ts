@@ -184,6 +184,12 @@ export interface MeshGradientOptions {
   seed?: number;
 
   /**
+   * Animation speed multiplier. Higher values make animation faster, lower values make it slower. Performance remains constant regardless of speed value.
+   * @default 1.0
+   */
+  animationSpeed?: number;
+
+  /**
    * Frequency for the gradient. Can be a single number or an object with x, y, and delta properties.
    * @default { x:  0.00014, y: 0.00029, delta: 0.0001 }
    */
