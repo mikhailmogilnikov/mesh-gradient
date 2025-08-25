@@ -1,4 +1,4 @@
-# @web-mesh-gradient/react
+# @mesh-gradient/react
 
 ## 1.4.0
 
@@ -29,5 +29,5 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @web-mesh-gradient/core@1.3.0
+  - @mesh-gradient/core@1.3.0
   - react@0.0.1

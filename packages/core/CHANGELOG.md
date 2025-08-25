@@ -1,4 +1,4 @@
-# web-mesh-gradient
+# mesh-gradient
 
 ## 1.4.0
 

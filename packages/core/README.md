@@ -29,7 +29,7 @@ npm install @mesh-gradient/core
 ### JavaScript/TypeScript
 
 ```javascript
-import { MeshGradient } from 'web-mesh-gradient';
+import { MeshGradient } from 'mesh-gradient';
 
 const canvas = document.querySelector('#gradient-canvas');
 const gradient = new MeshGradient();

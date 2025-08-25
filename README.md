@@ -6,7 +6,7 @@ Apple-inspired animated **mesh gradient** for the web. Written fully on **TypeSc
 
 ## Documentation
 
-Documetation website [available here.](https://web-mesh-gradient-docs.vercel.app)
+Documetation website [available here.](https://mesh-gradient-docs.vercel.app)
 
 ## Packages
 

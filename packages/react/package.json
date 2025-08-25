@@ -8,7 +8,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mikhailmogilnikov/web-mesh-gradient.git",
+    "url": "git+https://github.com/mikhailmogilnikov/mesh-gradient.git",
     "directory": "packages/react"
   },
   "author": "Mikhail Mogilnikov",
