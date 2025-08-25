@@ -1,5 +1,16 @@
 # @web-mesh-gradient/react
 
+## 1.4.0
+
+### Minor Changes
+
+- Introducing animationSpeed option and enchanced TS documentation
+
+### Patch Changes
+
+- Updated dependencies
+  - @mesh-gradient/core@1.4.0
+
 ## 1.3.1
 
 ### Patch Changes

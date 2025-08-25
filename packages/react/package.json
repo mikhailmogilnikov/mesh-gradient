@@ -1,6 +1,6 @@
 {
   "name": "@mesh-gradient/react",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "The SwiftUI Mesh Gradient abstraction for React",
   "keywords": [
     "mesh-gradient",
