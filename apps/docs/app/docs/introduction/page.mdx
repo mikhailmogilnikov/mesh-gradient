@@ -1,18 +1,10 @@
 # Introduction
 
-<b>Mesh Gradient</b> is a library for creating stunning animated gradient effects. It uses hardware accelerated `WebGL` to render the gradient and is optimized for performance.
+<b>Mesh Gradient</b> is a library for creating stunning animated gradient effects.
 
 ## Key Features
 
 import { Callout } from 'nextra/components'
-
-<Callout emoji="🚀">
-**High Performance** - Hardware-accelerated WebGL rendering with optimized frame skipping and auto-pause when out of viewport.
-</Callout>
-
-<Callout emoji="⚡">
-**Zero Dependencies** - Lightweight core library (~8kb gzipped) with no external dependencies.
-</Callout>
 
 <Callout emoji="🎨">
 **Highly Customizable** - Control colors, animation speed, frequency, and appearance with extensive configuration options.
@@ -22,13 +14,23 @@ import { Callout } from 'nextra/components'
 **Smooth Transitions** - Built-in fade transitions between gradient configurations with customizable duration.
 </Callout>
 
+<Callout emoji="🚀">
+**High Performance** - Hardware-accelerated WebGL rendering with optimized frame skipping and auto-pause when out of viewport.
+</Callout>
+
+<Callout emoji="⚡">
+**Zero Dependencies** - Lightweight core library (~8kb gzipped) with no external dependencies.
+</Callout>
+
+
+
 ## Motivation
 
-In 2021 [@jordienr](https://github.com/jordienr) and [@ndom91](https://github.com/ndom91) have uploaded to GitHub gist a [Stripe landing page gradient effect](https://gist.github.com/jordienr/64bcf75f8b08641f205bd6a1a0d4ce1d). They have also created a [Whatamesh](https://whatamesh.vercel.app/) website to showcase this beautiful tool.
+In 2021 [@jordienr](https://github.com/jordienr) and [@ndom91](https://github.com/ndom91) have uploaded to GitHub gist a [Stripe landing page gradient effect](https://gist.github.com/jordienr/64bcf75f8b08641f205bd6a1a0d4ce1d). They have also created a [Whatamesh](https://whatamesh.vercel.app/) website to showcase this beautiful package.
 
 However, the tool was one large file written in `JavaScript`, had unreadable code and structure, unused event listeners and pretty weird type definitions.
 
-I decided to rewrite the tool from scratch in `TypeScript` and make it more readable and maintainable.
+I decided to make it more readable and maintainable.
 
 ### Key changes
 
