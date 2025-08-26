@@ -1,4 +1,5 @@
 # Quick start
+import { Callout } from 'nextra/components'
 
 ## Installation
 
@@ -12,7 +13,7 @@ Place the canvas element in body of your HTML file.
 
 ```html copy filename="index.html"
 <body>
-  <canvas id="canvas"></canvas>
+  <canvas id="canvas" style="width: 10rem; height: 10rem;"></canvas>
 </body>
 ```
 
@@ -26,7 +27,15 @@ const gradient = new MeshGradient();
 gradient.init('#canvas');
 ```
 
-That's it! You can now use the mesh gradient in your project.
+That's it! You should see the the result on the page:
+
+import { MeshGradient } from '@mesh-gradient/react';
+
+<MeshGradient className='size-40 mt-4' />
+
+<Callout>
+**Note:** By default, colors and seed (initial pattern) of the gradient are generating randomly.
+</Callout>
 
 ## Configure gradient
 
@@ -42,7 +51,6 @@ const options: MeshGradientOptions = {
 gradient.init('#canvas', options);
 ```
 
-import { Callout } from 'nextra/components'
 
 <Callout>
  You can generate code for config by using [Playground](./) interface or explore all available options in the [API section.](./api#meshgradientoptions) 

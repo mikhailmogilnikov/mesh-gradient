@@ -6,7 +6,7 @@ import { genRandomColors, MeshGradientColorsConfig, MeshGradientOptions, MeshGra
 import { readableColor } from 'color2k';
 import { PiPauseFill, PiPlayFill } from 'react-icons/pi';
 import { clsx } from 'clsx';
-import { useTheme } from 'nextra-theme-docs';
+import { Link, useTheme } from 'nextra-theme-docs';
 
 import { GradientColors } from '../model/colors';
 
@@ -22,12 +22,9 @@ export const MeshPlayground = () => {
   const [activeColors, setActiveColors] = useState<MeshGradientToggleColorsConfig | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(true);
   const [transition, setTransition] = useState<false | undefined>(undefined);
-  const [randomSeed, setRandomSeed] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState<number | undefined>(undefined);
-  const [localAnimationSpeed, setLocalAnimationSpeed] = useState(1);
-
-  const { debouncedCallback: debouncedSetColors, cleanup: cleanupColors } = useDebounce(setColors);
-  const { debouncedCallback: debouncedSetAnimationSpeed, cleanup: cleanupAnimationSpeed } = useDebounce(setAnimationSpeed);
+  const [seed, setSeed] = useState<number | undefined>(undefined);
+  const [frequency, setFrequency] = useState<number | undefined>(undefined);
 
   const handleToggleColor = useCallback(
     (index: number) => {
@@ -72,38 +69,62 @@ export const MeshPlayground = () => {
 
       newColors[index] = e.target.value;
 
-      debouncedSetColors(newColors);
+      setColors(newColors);
     },
-    [colors, debouncedSetColors],
+    [colors],
   );
 
-  const handleAnimationSpeedChange = useCallback(
-    (value: number[]) => {
-      const newSpeed = value[0];
-      const newSpeedNormalized = newSpeed === 1 ? undefined : newSpeed;
+  const handleToggleRandomSeed = useCallback(() => {
+    setSeed(seed === undefined ? 5 : undefined);
+  }, [seed]);
 
-      setLocalAnimationSpeed(newSpeed);
-      debouncedSetAnimationSpeed(newSpeedNormalized);
-    },
-    [debouncedSetAnimationSpeed],
+  const handleSeedChange = useCallback((value: number[]) => {
+    const newSeed = value[0];
+
+    setSeed(newSeed);
+  }, []);
+
+  const handleFrequencyChange = useCallback((value: number[]) => {
+    const newFrequency = value[0];
+    const newFrequencyNormalized = newFrequency === 0.0002 ? undefined : newFrequency;
+
+    setFrequency(newFrequencyNormalized);
+  }, []);
+
+  const handleAnimationSpeedChange = useCallback((value: number[]) => {
+    const newSpeed = value[0];
+    const newSpeedNormalized = newSpeed === 1 ? undefined : newSpeed;
+
+    setAnimationSpeed(newSpeedNormalized);
+  }, []);
+
+  const meshOptions: MeshGradientOptions = useMemo(
+    () => ({ colors, transition, seed, activeColors, animationSpeed, frequency }),
+    [colors, transition, seed, activeColors, animationSpeed, frequency],
   );
+
+  const [debouncedMeshOptions, setDebouncedMeshOptions] = useState<MeshGradientOptions>(meshOptions);
+
+  const { debouncedCallback: debouncedSetMeshOptions, cleanup: cleanupMeshOptions } = useDebounce(setDebouncedMeshOptions, 150);
+
+  useEffect(() => {
+    debouncedSetMeshOptions(meshOptions);
+  }, [meshOptions]);
 
   useEffect(() => {
     return () => {
-      cleanupColors();
-      cleanupAnimationSpeed();
+      cleanupMeshOptions();
     };
-  }, [cleanupColors, cleanupAnimationSpeed]);
-
-  const meshOptions: MeshGradientOptions = useMemo(
-    () => ({ colors, transition, seed: randomSeed ? undefined : 5, activeColors, animationSpeed }),
-    [colors, transition, randomSeed, activeColors, animationSpeed],
-  );
+  }, [cleanupMeshOptions]);
 
   return (
     <div>
       <div className='flex flex-col gap-4'>
-        <MeshGradient options={meshOptions} isPaused={!isPlaying} className='w-full h-80 shrink-0 sm:aspect-video sm:h-auto rounded-2xl' />
+        <MeshGradient
+          options={debouncedMeshOptions}
+          isPaused={!isPlaying}
+          className='w-full h-80 shrink-0 sm:aspect-video sm:h-auto rounded-2xl'
+        />
 
         <div className='flex gap-2 sm:gap-4'>
           {colors.map((color, index) => {
@@ -147,7 +168,7 @@ export const MeshPlayground = () => {
         </div>
 
         <p className='text-sm text-foreground/50 font-medium'>
-          Tap to color to open color picker. Toggle line under the color for change its visibility.
+          Tap to color badge to open color picker. Tap to line under the badge for change color visibility.
         </p>
 
         <div role='separator' className='h-px w-full bg-foreground/10' />
@@ -177,11 +198,11 @@ export const MeshPlayground = () => {
             Transition
           </button>
           <button
-            onClick={() => setRandomSeed(!randomSeed)}
+            onClick={handleToggleRandomSeed}
             className={clsx(
               'h-12 rounded-full w-full flex items-center justify-center font-medium transition-colors duration-300',
-              randomSeed && 'bg-foreground text-background',
-              !randomSeed && 'bg-foreground/10 text-foreground',
+              !seed && 'bg-foreground text-background',
+              seed && 'bg-foreground/10 text-foreground',
             )}
           >
             Random seed
@@ -190,19 +211,58 @@ export const MeshPlayground = () => {
 
         <div className='flex flex-col gap-3 mt-2'>
           <div className='flex items-center justify-between'>
+            <p className='text-base font-medium'>Seed</p>
+
+            <p className='text-sm text-foreground/50 font-medium'>{seed ?? 'Random'}</p>
+          </div>
+
+          <Slider
+            disabled={seed === undefined}
+            min={1}
+            max={500}
+            step={1}
+            value={[seed ?? 5]}
+            onValueChange={handleSeedChange}
+            className='w-full'
+          />
+        </div>
+
+        <div className='flex flex-col gap-3 mt-2'>
+          <div className='flex items-center justify-between'>
             <p className='text-base font-medium'>Animation speed</p>
 
-            <p className='text-sm text-foreground/50 font-medium'>{localAnimationSpeed}</p>
+            <p className='text-sm text-foreground/50 font-medium'>x{animationSpeed ?? 1}</p>
           </div>
 
           <Slider
             min={0.1}
             max={10}
             step={0.1}
-            value={[localAnimationSpeed]}
+            value={[animationSpeed ?? 1]}
             onValueChange={handleAnimationSpeedChange}
             className='w-full'
           />
+        </div>
+
+        <div className='flex flex-col gap-3 mt-2'>
+          <div className='flex items-center justify-between'>
+            <p className='text-base font-medium'>Frequency</p>
+
+            <p className='text-sm text-foreground/50 font-medium'>{frequency ?? 'Default'}</p>
+          </div>
+
+          <Slider
+            min={0.0001}
+            max={0.001}
+            step={0.00001}
+            value={[frequency ?? 0.0002]}
+            onValueChange={handleFrequencyChange}
+            className='w-full'
+          />
+          <p className='text-sm text-foreground/50 font-medium mt-1'>
+            Frequency also supports more granular control over the x,y and delta properties. Follow{' '}
+            <Link href='/docs/api#frequency'>API reference</Link> for more details.
+          </p>
         </div>
 
         <div role='separator' className='h-px w-full bg-foreground/10 my-4' />
@@ -213,13 +273,14 @@ export const MeshPlayground = () => {
             className='bg-foreground/5'
             code={`import { type MeshGradientOptions } from '@mesh-gradient/core';
 
-const options: MeshGradientOptions = ${formatObjectAsJS(meshOptions)};;`}
+const options: MeshGradientOptions = ${formatObjectAsJS(debouncedMeshOptions)};;`}
             language='typescript'
             theme={`github-${resolvedTheme}`}
           />
         </div>
         <p className='text-sm text-foreground/50 font-medium'>
-          You can paste this configuration to any <b>MeshGradient</b> instance or component in your project.
+          You can paste this configuration to any <b>MeshGradient</b> instance or component in your project. Full list of available options
+          you can find in <Link href='/docs/api'>API reference</Link> section.
         </p>
       </div>
     </div>

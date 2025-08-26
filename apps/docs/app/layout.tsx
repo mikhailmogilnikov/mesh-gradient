@@ -42,6 +42,10 @@ const Footer = () => (
   </footer>
 );
 
+const LastUpdated = () => {
+  return <div />;
+};
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const pageMap = await getPageMap();
 
@@ -70,7 +74,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
           editLink='Edit this page'
           pageMap={pageMap}
-          docsRepositoryBase={CONFIG.github}
+          lastUpdated={<LastUpdated />}
+          docsRepositoryBase={CONFIG.github + '/tree/main/apps/docs'}
           darkMode={true}
         >
           {children}
