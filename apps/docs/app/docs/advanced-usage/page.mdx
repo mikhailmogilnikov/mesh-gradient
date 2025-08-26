@@ -1,1 +1,198 @@
 # Advanced usage
+
+In this section, we will cover some advanced usage of the library.
+
+## Instance methods
+
+Methods which are available on the `MeshGradient` instance. [API reference](/docs/api)
+
+### `init(element, options?)`
+
+Initializes the gradient. Requires the HTML canvas element to be passed as the first argument. Supports optional **smooth appearance animation**.
+
+```ts copy
+const gradient = new MeshGradient();
+
+// Alternatively, you can pass the element as a string selector
+const canvas = document.getElementById('gradient');
+
+gradient.init(canvas, {
+  appearance: 'smooth', // default is 'smooth'
+  appearanceDuration: 300, // default is 300ms
+});
+```
+
+### `update(options?)`
+
+Updates the **initialized** gradient with the new options. Supports **fade** transition between the old and new options.
+
+```ts copy
+const gradient = new MeshGradient();
+
+gradient.init('#gradient'); // Initialize the gradient first
+
+gradient.update({
+  colors: ["#8a519a", "#6101c1", "#e24097", "#f3121d"],
+  transition: true, // default is true
+  transitionDuration: 300, // default is 300ms
+});
+```
+
+### `destroy()`
+
+Destroys the **initialized** gradient instance. Helps to free up memory and prevent memory leaks (especially in SPA applications).
+
+```ts copy
+const gradient = new MeshGradient();
+
+gradient.init('#gradient'); // Initialize the gradient
+
+gradient.destroy();
+```
+
+### `pause()` and `play()`
+
+Animation playback control methods. 
+
+```ts copy
+const gradient = new MeshGradient();
+
+gradient.pause(); // Pauses the gradient animation
+gradient.play(); // Resumes the gradient animation
+```
+
+## Gradient options
+
+All available options for the gradient.
+
+import { Callout } from 'nextra/components'
+
+<Callout>
+You can generate the code for the options using the [Playground](/docs).
+</Callout>
+
+### `colors`
+
+Array of colors. Must be an array of strings in the format `#RRGGBB` or `#RGB`. If not provided, the gradient will use the random colors on each initialization or update.
+
+```ts copy
+const options: MeshGradientOptions = {
+  colors: ['#8a519a', '#6101c1', '#e24097', '#f3121d'],
+};
+```
+
+### `seed`
+
+Seed (initial pattern) for the gradient. If not provided, the gradient will use the random seed on each initialization or update.
+
+```ts copy
+const options: MeshGradientOptions = {
+  seed: 1,
+};
+```
+
+### `animationSpeed`
+
+Animation speed multiplier. Higher values make animation faster, lower values make it slower. Performance remains constant regardless of speed value.
+
+```ts copy
+const options: MeshGradientOptions = {
+  animationSpeed: 1.5, // 1.5x faster than default
+};
+```
+
+### `frequency`
+
+Frequency for the gradient. Can be a single number or an object with x, y, and delta properties.
+
+```ts copy
+const options: MeshGradientOptions = {
+  // Single number
+  frequency: 0.0002,
+  
+  // Or object with specific values
+  frequency: {
+    x: 0.00014,
+    y: 0.00029,
+    delta: 0.0001
+  },
+};
+```
+
+### `activeColors`
+
+Active colors for the gradient. Controls which of the 4 colors are visible.
+
+```ts copy
+const options: MeshGradientOptions = {
+  activeColors: {
+    1: true,  // First color is active
+    2: false, // Second color is inactive
+    3: true,  // Third color is active
+    4: true,  // Fourth color is active
+  },
+};
+```
+
+### `isStatic`
+
+Static mode. If true, the gradient will not animate. Optimized for performance.
+
+```ts copy
+const options: MeshGradientOptions = {
+  isStatic: true, // No animation, better performance
+};
+```
+
+### `pauseOnOutsideViewport`
+
+Auto pause when gradient goes out of viewport. Powered by `Intersection Observer` API.
+
+```ts copy
+const options: MeshGradientOptions = {
+  pauseOnOutsideViewport: true, // Pause when not visible
+};
+```
+
+### `pauseObserverOptions`
+
+Intersection observer options for pause on outside viewport option.
+
+```ts copy
+const options: MeshGradientOptions = {
+  pauseObserverOptions: {
+    root: document.body,
+    rootMargin: '0px',
+    threshold: 0.05
+  },
+};
+```
+
+### `resizeDelay`
+
+Resize delay after canvas is resized. Helps to optimize performance.
+
+```ts copy
+const options: MeshGradientOptions = {
+  resizeDelay: 300, // 300ms delay after resize
+};
+```
+
+### `cssVariablesFallback`
+
+Fallback to CSS variables instead of random colors if colors are not provided.
+
+```ts copy
+const options: MeshGradientOptions = {
+  cssVariablesFallback: true,
+};
+```
+
+```css copy filename="style.css"
+:root {
+  --mesh-gradient-color-1: #ff0080;
+  --mesh-gradient-color-2: #0080ff;
+  --mesh-gradient-color-3: #80ff00;
+  --mesh-gradient-color-4: #ff8000;
+}
+```
