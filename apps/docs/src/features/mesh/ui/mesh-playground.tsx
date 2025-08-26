@@ -115,7 +115,7 @@ export const MeshPlayground = () => {
         <MeshGradient
           options={debouncedMeshOptions}
           isPaused={!isPlaying}
-          className='w-full h-80 shrink-0 sm:aspect-video sm:h-auto rounded-2xl'
+          className='w-full h-100 shrink-0 sm:aspect-video sm:h-auto rounded-2xl'
         />
 
         <div className='flex gap-2 sm:gap-4'>

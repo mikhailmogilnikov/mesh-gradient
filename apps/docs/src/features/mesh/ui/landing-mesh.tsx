@@ -15,13 +15,16 @@ export const LandingMesh = () => {
     if (!instance || !ref.current) return;
 
     instance.init(ref.current, {
-      colors: GradientColors.twilightPurple as MeshGradientColorsConfig,
+      colors: GradientColors.green as MeshGradientColorsConfig,
     });
 
     const interval = setInterval(() => {
+      const randomSpeed = Math.random() * 0.5 + 0.8;
+
       instance.update({
         colors: getRandomColorSet() as MeshGradientColorsConfig,
         transitionDuration: 400,
+        animationSpeed: randomSpeed,
       });
     }, 4500);
 

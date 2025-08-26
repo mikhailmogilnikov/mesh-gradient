@@ -13,7 +13,6 @@ export const GradientColors = {
   forest: ['#0B486B', '#F56217', '#5BC0BE', '#6FB98F'],
   ember: ['#FF4E50', '#F9D423', '#EDE574', '#E1F5C4'],
   sunset: ['#ff7e5f', '#feb47b', '#ff9a8b', '#ff6a88'],
-  midnight: ['#2c3e50', '#4ca1af', '#c94b4b', '#e96443'],
   coral: ['#ff6f61', '#d7263d', '#3f88c5', '#1b1b2f'],
   lavender: ['#c3aed6', '#a28fd0', '#8668c7', '#654ba5'],
   mint: ['#3eb489', '#3eb489', '#38ef7d', '#11998e'],
@@ -37,8 +36,9 @@ const LandingColorSets = [
   GradientColors.oceanDream,
   GradientColors.twilightPurple,
   GradientColors.purple,
-  GradientColors.midnight,
-  GradientColors.forest,
+  GradientColors.green,
+  GradientColors.sunrise,
+  GradientColors.emeraldGlow,
 ];
 
 export const getRandomColorSet = () => {
