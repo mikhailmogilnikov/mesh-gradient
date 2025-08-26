@@ -10,10 +10,12 @@ import { Link, useTheme } from 'nextra-theme-docs';
 
 import { GradientColors } from '../model/colors';
 
+import { MeshSliders } from './mesh-sliders';
+
 import { CodeHighlighter } from '@/src/shared/ui/code-highlighter';
-import { Slider } from '@/src/shared/ui/slider';
 import { formatObjectAsJS } from '@/src/shared/lib/formatObj';
 import { useDebounce } from '@/src/shared/lib/useDebounce';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/shared/ui/select';
 
 export const MeshPlayground = () => {
   const { resolvedTheme } = useTheme();
@@ -63,40 +65,30 @@ export const MeshPlayground = () => {
     [activeColors],
   );
 
+  const { debouncedCallback: debouncedSetColors } = useDebounce(setColors, 50);
+
   const handleColorChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
       const newColors = [...colors] as MeshGradientColorsConfig;
 
       newColors[index] = e.target.value;
 
-      setColors(newColors);
+      debouncedSetColors(newColors);
     },
-    [colors],
+    [colors, debouncedSetColors],
   );
 
   const handleToggleRandomSeed = useCallback(() => {
     setSeed(seed === undefined ? 5 : undefined);
   }, [seed]);
 
-  const handleSeedChange = useCallback((value: number[]) => {
-    const newSeed = value[0];
+  const colorsPresetValue = useMemo(() => {
+    const colorsPreset = Object.entries(GradientColors).find(([_key, value]) => {
+      return value.every((color) => colors.includes(color));
+    });
 
-    setSeed(newSeed);
-  }, []);
-
-  const handleFrequencyChange = useCallback((value: number[]) => {
-    const newFrequency = value[0];
-    const newFrequencyNormalized = newFrequency === 0.0002 ? undefined : newFrequency;
-
-    setFrequency(newFrequencyNormalized);
-  }, []);
-
-  const handleAnimationSpeedChange = useCallback((value: number[]) => {
-    const newSpeed = value[0];
-    const newSpeedNormalized = newSpeed === 1 ? undefined : newSpeed;
-
-    setAnimationSpeed(newSpeedNormalized);
-  }, []);
+    return colorsPreset?.[0] ?? '';
+  }, [colors]);
 
   const meshOptions: MeshGradientOptions = useMemo(
     () => ({ colors, transition, seed, activeColors, animationSpeed, frequency }),
@@ -186,7 +178,29 @@ export const MeshPlayground = () => {
           </button>
         </div>
 
-        <div className='flex gap-2 -mt-1'>
+        <Select
+          value={colorsPresetValue}
+          onValueChange={(value) => setColors(GradientColors[value as keyof typeof GradientColors] as MeshGradientColorsConfig)}
+        >
+          <SelectTrigger className='w-full h-12 max-h-none rounded-full bg-foreground/10 text-foreground px-3'>
+            <SelectValue placeholder='Select color preset' className='text-lg font-medium' />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(GradientColors).map(([key, value]) => (
+              <SelectItem key={key} value={key}>
+                <div
+                  className='size-6 rounded-full flex items-center justify-center'
+                  style={{ background: 'linear-gradient(to right, ' + value.join(', ') + ')' }}
+                />
+                <p className='text-base font-medium'>{key.charAt(0).toUpperCase() + key.slice(1)}</p>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <div role='separator' className='h-px w-full bg-foreground/10' />
+
+        <div className='flex gap-2'>
           <button
             onClick={() => setTransition(transition === undefined ? false : undefined)}
             className={clsx(
@@ -209,61 +223,19 @@ export const MeshPlayground = () => {
           </button>
         </div>
 
-        <div className='flex flex-col gap-3 mt-2'>
-          <div className='flex items-center justify-between'>
-            <p className='text-base font-medium'>Seed</p>
+        <MeshSliders
+          seed={seed}
+          animationSpeed={animationSpeed}
+          frequency={frequency}
+          onSeedChange={setSeed}
+          onAnimationSpeedChange={setAnimationSpeed}
+          onFrequencyChange={setFrequency}
+        />
 
-            <p className='text-sm text-foreground/50 font-medium'>{seed ?? 'Random'}</p>
-          </div>
-
-          <Slider
-            disabled={seed === undefined}
-            min={1}
-            max={500}
-            step={1}
-            value={[seed ?? 5]}
-            onValueChange={handleSeedChange}
-            className='w-full'
-          />
-        </div>
-
-        <div className='flex flex-col gap-3 mt-2'>
-          <div className='flex items-center justify-between'>
-            <p className='text-base font-medium'>Animation speed</p>
-
-            <p className='text-sm text-foreground/50 font-medium'>x{animationSpeed ?? 1}</p>
-          </div>
-
-          <Slider
-            min={0.1}
-            max={10}
-            step={0.1}
-            value={[animationSpeed ?? 1]}
-            onValueChange={handleAnimationSpeedChange}
-            className='w-full'
-          />
-        </div>
-
-        <div className='flex flex-col gap-3 mt-2'>
-          <div className='flex items-center justify-between'>
-            <p className='text-base font-medium'>Frequency</p>
-
-            <p className='text-sm text-foreground/50 font-medium'>{frequency ?? 'Default'}</p>
-          </div>
-
-          <Slider
-            min={0.0001}
-            max={0.001}
-            step={0.00001}
-            value={[frequency ?? 0.0002]}
-            onValueChange={handleFrequencyChange}
-            className='w-full'
-          />
-          <p className='text-sm text-foreground/50 font-medium mt-1'>
-            Frequency also supports more granular control over the x,y and delta properties. Follow{' '}
-            <Link href='/docs/api#frequency'>API reference</Link> for more details.
-          </p>
-        </div>
+        <p className='text-sm text-foreground/50 font-medium mt-1'>
+          Frequency also supports more granular control over the x,y and delta properties. Follow{' '}
+          <Link href='/docs/api#frequency'>API reference</Link> for more details.
+        </p>
 
         <div role='separator' className='h-px w-full bg-foreground/10 my-4' />
 
