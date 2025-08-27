@@ -18,7 +18,9 @@ const meta: MetaRecord = {
     type: 'separator',
     title: 'Integrations',
   },
-  react: 'React',
+  react: {
+    title: 'React',
+  },
 };
 
 export default meta;

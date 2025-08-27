@@ -1,0 +1,207 @@
+# `<MeshGradient />`
+
+The `MeshGradient` component creates a beautiful animated gradient using WebGL. It automatically manages the gradient lifecycle and provides a simple API for customizing appearance.
+
+## Basic Usage
+
+```tsx
+import { MeshGradient } from '@mesh-gradient/react'
+
+function App() {
+  return (
+    <MeshGradient 
+      style={{ width: '300px', height: '200px' }} 
+    />
+  )
+}
+```
+
+## Props
+
+### Main Props
+
+The component accepts all standard HTML attributes for `<canvas>` element, plus the following special props:
+
+import { generateDefinition, TSDoc } from 'nextra/tsdoc'
+
+<TSDoc
+  definition={generateDefinition({
+    code: `
+import type { MeshGradientProps } from '@mesh-gradient/react';
+
+type MeshProps = Pick<MeshGradientProps, 'options' | 'isPaused' | 'onInit' | 'onUpdate'>;
+
+export default MeshProps;
+`})}
+/>
+
+### HTML Attributes
+
+You can pass any standard HTML attributes for canvas element:
+
+```tsx
+<MeshGradient 
+  className="rounded-lg shadow-lg"
+  style={{ width: '100%', height: '300px' }}
+  id="my-gradient"
+/>
+```
+
+## Configuration Options
+
+You can follow the [Gradient options](./advanced-usage#gradient-options) section for all available options with examples.
+
+## Pause/Resume
+
+```tsx
+import { useState } from 'react'
+
+function App() {
+  const [isPaused, setIsPaused] = useState(false)
+
+  return (
+    <div>
+      <button onClick={() => setIsPaused(!isPaused)}>
+        {isPaused ? 'Resume' : 'Pause'}
+      </button>
+      
+      <MeshGradient 
+        isPaused={isPaused}
+        style={{ width: '300px', height: '200px' }}
+      />
+    </div>
+  )
+}
+```
+
+## Callbacks
+
+### onInit
+
+Called after gradient initialization:
+
+```tsx
+<MeshGradient 
+  onInit={(instance) => {
+    console.log('Gradient initialized:', instance)
+    // You can call instance methods
+  }}
+/>
+```
+
+### onUpdate
+
+Called when options are updated:
+
+```tsx
+<MeshGradient 
+  onUpdate={(instance) => {
+    console.log('Gradient updated:', instance)
+  }}
+/>
+```
+
+## Transitions & Animations
+
+### Smooth Appearance
+
+```tsx
+<MeshGradient 
+  options={{
+    appearance: 'smooth',
+    appearanceDuration: 500 // 500ms
+  }}
+/>
+```
+
+### Smooth Transitions on Update
+
+```tsx
+<MeshGradient 
+  options={{
+    transition: true,
+    transitionDuration: 600 // 600ms
+  }}
+/>
+```
+
+## CSS Variables
+
+You can use CSS variables for colors:
+
+```css
+:root {
+  --mesh-gradient-color-1: #ff0080;
+  --mesh-gradient-color-2: #0080ff;
+  --mesh-gradient-color-3: #80ff00;
+  --mesh-gradient-color-4: #ff8000;
+}
+```
+
+```tsx
+<MeshGradient 
+  options={{
+    cssVariablesFallback: true
+  }}
+/>
+```
+
+## Usage Examples
+
+### Responsive Gradient
+
+```tsx
+<MeshGradient 
+  className="w-full h-64 md:h-96 lg:h-[500px]"
+  options={{
+    animationSpeed: 0.8
+  }}
+/>
+```
+
+### Controlled Gradient
+
+```tsx
+import { useState } from 'react'
+
+function ControlledGradient() {
+  const [config, setConfig] = useState({
+    animationSpeed: 1.0,
+    isPaused: false
+  })
+
+  const updateSpeed = () => {
+    setConfig(prev => ({
+      ...prev,
+      animationSpeed: 2
+    }))
+  }
+
+  return (
+    <div>
+      <button onClick={updateSpeed}>
+        Change speed
+      </button>
+      
+      <MeshGradient 
+        options={config}
+        isPaused={config.isPaused}
+        style={{ width: '300px', height: '200px' }}
+      />
+    </div>
+  )
+}
+```
+
+## Performance
+
+- Gradient automatically pauses when outside viewport
+- Static mode supported for better performance
+- Optimized resize handling with delay
+- Automatic resource cleanup on component unmount
+
+## Limitations
+
+- Requires WebGL support in browser
+- Client-side only (uses `'use client'`)
+- Canvas size must be greater than 0x0 pixels
