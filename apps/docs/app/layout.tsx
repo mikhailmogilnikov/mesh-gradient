@@ -57,14 +57,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         }}
       >
         <meta name='apple-mobile-web-app-title' content='Mesh' />
-
-        {/* Your additional tags should be passed as `children` of `<Head>` element */}
       </Head>
       <body className={openRunde.className}>
         <Layout
           navbar={navbar}
           footer={<Footer />}
-          sidebar={{ defaultMenuCollapseLevel: 1 }}
+          sidebar={{ defaultMenuCollapseLevel: 2 }}
           navigation={{
             prev: true,
             next: true,
