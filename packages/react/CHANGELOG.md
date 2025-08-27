@@ -1,5 +1,13 @@
 # @mesh-gradient/react
 
+## 1.4.1
+
+### Patch Changes
+
+- e950fe4: update props defs
+- Updated dependencies [e950fe4]
+  - @mesh-gradient/core@1.4.1
+
 ## 1.4.0
 
 ### Minor Changes

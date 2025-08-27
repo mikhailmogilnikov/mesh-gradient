@@ -1,5 +1,11 @@
 # mesh-gradient
 
+## 1.4.1
+
+### Patch Changes
+
+- e950fe4: update props defs
+
 ## 1.4.0
 
 ### Minor Changes
