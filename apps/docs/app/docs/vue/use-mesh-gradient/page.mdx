@@ -1,0 +1,302 @@
+# `useMeshGradient()`
+
+The `useMeshGradient` composable creates and manages a `MeshGradient` instance. It automatically handles the lifecycle of the gradient instance and provides access to the core MeshGradient API for advanced use cases.
+
+## Basic Usage
+
+```vue
+<template>
+  <div>My Component</div>
+</template>
+
+<script setup lang="ts">
+import { useMeshGradient } from '@mesh-gradient/vue'
+
+const { instance } = useMeshGradient()
+
+// instance is available after component mounts
+// You can call methods on it when needed
+</script>
+```
+
+## Return Value
+
+The composable returns an object with the following property:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `instance` | `Ref<MeshGradient \| null>` | Reactive reference to the MeshGradient instance or `null` if not yet initialized |
+
+## When to Use
+
+Use `useMeshGradient` when you need:
+
+- **Direct access** to the MeshGradient instance
+- **Custom initialization logic** beyond the component's automatic behavior
+- **Advanced control** over gradient lifecycle
+- **Integration** with other libraries or custom logic
+
+## Lifecycle Management
+
+The composable automatically:
+
+- Creates a new `MeshGradient` instance on mount
+- Destroys the instance when the component unmounts
+- Provides the instance through a reactive reference
+
+```vue
+<template>
+  <canvas ref="canvasRef" />
+</template>
+
+<script setup lang="ts">
+import { useMeshGradient } from '@mesh-gradient/vue'
+import { ref, onMounted } from 'vue'
+
+const { instance } = useMeshGradient()
+const canvasRef = ref<HTMLCanvasElement>()
+
+onMounted(() => {
+  if (!instance.value || !canvasRef.value) return
+  
+  // Custom initialization logic
+  instance.value.init(canvasRef.value, {
+    colors: ['#ff0080', '#0080ff', '#ff0080', '#0080ff'],
+    seed: 42
+  })
+})
+</script>
+```
+
+## Available Methods
+
+When you have access to the `instance.value`, you can call these methods:
+
+### Core Methods
+
+```vue
+<script setup lang="ts">
+import { useMeshGradient } from '@mesh-gradient/vue'
+
+const { instance } = useMeshGradient()
+
+// Initialize the gradient
+instance.value?.init(canvas, options)
+
+// Update gradient options
+instance.value?.update(options)
+
+// Play animation
+instance.value?.play()
+
+// Pause animation
+instance.value?.pause()
+
+// Destroy the gradient
+instance.value?.destroy()
+</script>
+```
+
+### Properties
+
+```vue
+<script setup lang="ts">
+import { useMeshGradient } from '@mesh-gradient/vue'
+
+const { instance } = useMeshGradient()
+
+// Check if gradient is initialized
+if (instance.value?.isInitialized) {
+  // Safe to call methods
+}
+</script>
+```
+
+## Advanced Example
+
+```vue
+<template>
+  <div>
+    <canvas 
+      ref="canvasRef" 
+      class="w-full h-64 rounded-lg"
+    />
+    
+    <div class="mt-4 space-x-2">
+      <button @click="toggleAnimation">
+        {{ isPaused ? 'Play' : 'Pause' }}
+      </button>
+      <button @click="updateColors">
+        Random Colors
+      </button>
+      <button @click="resetGradient">
+        Reset
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useMeshGradient } from '@mesh-gradient/vue'
+import { ref, onMounted, watch } from 'vue'
+
+const { instance } = useMeshGradient()
+const canvasRef = ref<HTMLCanvasElement>()
+const isPaused = ref(false)
+
+// Initialize gradient on mount
+onMounted(() => {
+  if (!instance.value || !canvasRef.value) return
+  
+  instance.value.init(canvasRef.value, {
+    colors: ['#ff0080', '#0080ff', '#80ff00', '#ff8000'],
+    animationSpeed: 1.2,
+    seed: 1
+  })
+})
+
+// Watch for pause state changes
+watch(isPaused, (paused) => {
+  if (!instance.value?.isInitialized) return
+  
+  if (paused) {
+    instance.value.pause()
+  } else {
+    instance.value.play()
+  }
+})
+
+const toggleAnimation = () => {
+  isPaused.value = !isPaused.value
+}
+
+const updateColors = () => {
+  if (!instance.value?.isInitialized) return
+  
+  const randomColors = [
+    '#' + Math.floor(Math.random()*16777215).toString(16),
+    '#' + Math.floor(Math.random()*16777215).toString(16),
+    '#' + Math.floor(Math.random()*16777215).toString(16),
+    '#' + Math.floor(Math.random()*16777215).toString(16)
+  ]
+  
+  instance.value.update({
+    colors: randomColors,
+    transition: true,
+    transitionDuration: 500
+  })
+}
+
+const resetGradient = () => {
+  if (!instance.value?.isInitialized) return
+  
+  instance.value.update({
+    colors: ['#ff0080', '#0080ff', '#80ff00', '#ff8000'],
+    seed: 1,
+    transition: true
+  })
+}
+</script>
+```
+
+## Reactive Integration
+
+You can integrate the composable with Vue's reactivity system:
+
+```vue
+<template>
+  <div>
+    <canvas ref="canvasRef" class="w-full h-64" />
+    
+    <div class="mt-4 space-y-2">
+      <div>
+        <label>Animation Speed: {{ animationSpeed.toFixed(1) }}</label>
+        <input 
+          v-model.number="animationSpeed" 
+          type="range" 
+          min="0.1" 
+          max="3" 
+          step="0.1"
+        />
+      </div>
+      
+      <div>
+        <label>
+          <input v-model="isStatic" type="checkbox" />
+          Static Mode
+        </label>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useMeshGradient } from '@mesh-gradient/vue'
+import { ref, onMounted, watch } from 'vue'
+
+const { instance } = useMeshGradient()
+const canvasRef = ref<HTMLCanvasElement>()
+const animationSpeed = ref(1.0)
+const isStatic = ref(false)
+
+onMounted(() => {
+  if (!instance.value || !canvasRef.value) return
+  
+  instance.value.init(canvasRef.value)
+})
+
+// Watch for changes and update gradient
+watch([animationSpeed, isStatic], () => {
+  if (!instance.value?.isInitialized) return
+  
+  instance.value.update({
+    animationSpeed: animationSpeed.value,
+    isStatic: isStatic.value
+  })
+})
+</script>
+```
+
+## Performance Considerations
+
+- The composable creates a new instance on every component mount
+- For frequently mounting/unmounting components, consider using a shared instance
+- The instance is automatically destroyed on unmount, preventing memory leaks
+- Use `instance.value?.isInitialized` to check if it's safe to call methods
+
+## When NOT to Use
+
+Don't use `useMeshGradient` if you:
+
+- Only need basic gradient display (use `<MeshGradient />` component instead)
+- Don't need direct control over the gradient instance
+- Want automatic canvas management and lifecycle handling
+
+## Comparison with Component
+
+| Feature | `useMeshGradient` | `<MeshGradient />` |
+|---------|-------------------|-------------------|
+| Canvas management | Manual | Automatic |
+| Lifecycle control | Full control | Automatic |
+| Setup complexity | Higher | Lower |
+| Flexibility | High | Medium |
+| Use case | Advanced/Integration | Basic display |
+
+## TypeScript Support
+
+The composable is fully typed and provides proper TypeScript support:
+
+```vue
+<script setup lang="ts">
+import { useMeshGradient } from '@mesh-gradient/vue'
+import type { MeshGradient } from '@mesh-gradient/core'
+
+const { instance } = useMeshGradient()
+
+// instance is properly typed as Ref<MeshGradient | null>
+if (instance.value) {
+  // TypeScript knows instance.value is MeshGradient here
+  instance.value.init(/* ... */)
+}
+</script>
+```

@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     "./package": "./package.js",
-    "./react-package": "./react-package.js"
+    "./react-package": "./react-package.js",
+    "./vue-package": "./vue-package.js"
   },
   "peerDependencies": {},
   "devDependencies": {

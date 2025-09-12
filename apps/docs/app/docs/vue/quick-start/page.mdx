@@ -1,0 +1,49 @@
+# Quick start
+
+Mesh Gradient supports Vue 3 and SSR frameworks like Nuxt.js via the `@mesh-gradient/vue` package.
+
+## Installation
+
+```sh npm2yarn copy
+npm install @mesh-gradient/vue
+```
+
+## Usage
+
+```vue copy filename="App.vue"
+<template>
+  <MeshGradient :style="{ width: '10rem', height: '10rem' }" />
+</template>
+
+<script setup lang="ts">
+import { MeshGradient } from '@mesh-gradient/vue'
+</script>
+```
+
+That's it! You should see the result on the page:
+
+import { MeshGradient } from '@mesh-gradient/react';
+
+<MeshGradient className='size-40 mt-4' />
+
+import { Callout } from 'nextra/components'
+
+<Callout>
+**Note:** By default, colors and seed (initial pattern) of the gradient are generated randomly.
+</Callout>
+
+## Configure gradient
+
+The mesh gradient can be configured by passing `options` prop.
+
+```vue copy 
+<template>
+  <MeshGradient :options="{ seed: 1 }" />
+</template>
+```
+
+Changing `options` prop will update the gradient with new settings. `<MeshGradient />` component supports smooth appearance and fade transitions between states out-of-the-box.
+
+<Callout>
+You can generate code for config by using [Playground](/docs) interface or explore all available options in the [API section.](/docs/api#meshgradientoptions) 
+</Callout>

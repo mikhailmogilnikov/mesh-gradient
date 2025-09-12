@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "files": [
     "pack.json",
-    "react-package.json"
+    "react-package.json",
+    "vue-package.json"
   ],
   "private": true,
   "type": "module",

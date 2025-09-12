@@ -1,0 +1,276 @@
+# `<MeshGradient />`
+
+The `MeshGradient` component creates a beautiful animated gradient using WebGL. It automatically manages the gradient lifecycle and provides a simple API for customizing appearance.
+
+## Basic Usage
+
+```vue
+<template>
+  <MeshGradient :style="{ width: '300px', height: '200px' }" />
+</template>
+
+<script setup lang="ts">
+import { MeshGradient } from '@mesh-gradient/vue'
+</script>
+```
+
+## Props
+
+### Main Props
+
+The component accepts all standard HTML attributes for `<canvas>` element, plus the following special props:
+
+import { generateDefinition, TSDoc } from 'nextra/tsdoc'
+
+<TSDoc
+  definition={generateDefinition({
+    code: `
+import type { MeshGradientProps } from '@mesh-gradient/vue';
+
+type MeshProps = Pick<MeshGradientProps, 'options' | 'isPaused'>;
+
+export default MeshProps;
+`})}
+/>
+
+### HTML Attributes
+
+You can pass any standard HTML attributes for canvas element:
+
+```vue
+<template>
+  <MeshGradient 
+    class="rounded-lg shadow-lg"
+    :style="{ width: '100%', height: '300px' }"
+    id="my-gradient"
+  />
+</template>
+```
+
+## Configuration Options
+
+You can follow the [Gradient options](/docs/advanced-usage#gradient-options) section for all available options with examples.
+
+## Pause/Resume
+
+```vue
+<template>
+  <div>
+    <button @click="togglePause">
+      {{ isPaused ? 'Resume' : 'Pause' }}
+    </button>
+    
+    <MeshGradient 
+      :isPaused="isPaused"
+      :style="{ width: '300px', height: '200px' }"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { MeshGradient } from '@mesh-gradient/vue'
+
+const isPaused = ref(false)
+
+const togglePause = () => {
+  isPaused.value = !isPaused.value
+}
+</script>
+```
+
+## Events
+
+### @init
+
+Emitted after gradient initialization:
+
+```vue
+<template>
+  <MeshGradient 
+    @init="onGradientInit"
+  />
+</template>
+
+<script setup lang="ts">
+const onGradientInit = (instance) => {
+  console.log('Gradient initialized:', instance)
+  // You can call instance methods
+}
+</script>
+```
+
+### @update
+
+Emitted when options are updated:
+
+```vue
+<template>
+  <MeshGradient 
+    @update="onGradientUpdate"
+  />
+</template>
+
+<script setup lang="ts">
+const onGradientUpdate = (instance) => {
+  console.log('Gradient updated:', instance)
+}
+</script>
+```
+
+## Transitions & Animations
+
+### Smooth Appearance
+
+```vue
+<template>
+  <MeshGradient 
+    :options="{
+      appearance: 'smooth',
+      appearanceDuration: 500 // 500ms
+    }"
+  />
+</template>
+```
+
+### Smooth Transitions on Update
+
+```vue
+<template>
+  <MeshGradient 
+    :options="{
+      transition: true,
+      transitionDuration: 600 // 600ms
+    }"
+  />
+</template>
+```
+
+## CSS Variables
+
+You can use CSS variables for colors:
+
+```css
+:root {
+  --mesh-gradient-color-1: #ff0080;
+  --mesh-gradient-color-2: #0080ff;
+  --mesh-gradient-color-3: #80ff00;
+  --mesh-gradient-color-4: #ff8000;
+}
+```
+
+```vue
+<template>
+  <MeshGradient 
+    :options="{
+      cssVariablesFallback: true
+    }"
+  />
+</template>
+```
+
+## Usage Examples
+
+### Responsive Gradient
+
+```vue
+<template>
+  <MeshGradient 
+    class="w-full h-64 md:h-96 lg:h-[500px]"
+    :options="{
+      animationSpeed: 0.8
+    }"
+  />
+</template>
+```
+
+### Reactive Gradient
+
+```vue
+<template>
+  <div>
+    <button @click="updateSpeed">
+      Change speed
+    </button>
+    
+    <MeshGradient 
+      :options="config"
+      :isPaused="config.isPaused"
+      :style="{ width: '300px', height: '200px' }"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { reactive } from 'vue'
+import { MeshGradient } from '@mesh-gradient/vue'
+
+const config = reactive({
+  animationSpeed: 1.0,
+  isPaused: false
+})
+
+const updateSpeed = () => {
+  config.animationSpeed = 2
+}
+</script>
+```
+
+### Using Composition API
+
+```vue
+<template>
+  <div>
+    <button @click="toggleAnimation">
+      {{ isPaused ? 'Play' : 'Pause' }}
+    </button>
+    
+    <MeshGradient 
+      :options="gradientOptions"
+      :isPaused="isPaused"
+      @init="handleInit"
+      @update="handleUpdate"
+      class="w-full h-64"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { MeshGradient } from '@mesh-gradient/vue'
+
+const isPaused = ref(false)
+const speed = ref(1.0)
+
+const gradientOptions = computed(() => ({
+  colors: ['#8B5CF6', '#06B6D4', '#10B981', '#F59E0B'],
+  animationSpeed: speed.value,
+  seed: 42
+}))
+
+const toggleAnimation = () => {
+  isPaused.value = !isPaused.value
+}
+
+const handleInit = (instance) => {
+  console.log('Gradient initialized:', instance)
+}
+
+const handleUpdate = (instance) => {
+  console.log('Gradient updated:', instance)
+}
+</script>
+```
+
+## Performance
+
+- Gradient automatically pauses when outside viewport
+- Static mode supported for better performance
+- Optimized resize handling with delay
+- Automatic resource cleanup on component unmount
+
+## Limitations
+
+- Requires WebGL support in browser
+- Canvas size must be greater than 0x0 pixels
+- Works in client-side environments (browser)

@@ -21,6 +21,9 @@ const meta: MetaRecord = {
   react: {
     title: 'React',
   },
+  vue: {
+    title: 'Vue',
+  },
 };
 
 export default meta;

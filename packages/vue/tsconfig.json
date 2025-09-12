@@ -1,0 +1,13 @@
+{
+  "extends": "@repo/ts-config/vue-package.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "baseUrl": ".",
+    "rootDir": ".",
+    "outDir": "dist",
+    "jsx": "preserve",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
