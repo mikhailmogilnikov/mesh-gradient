@@ -1,6 +1,6 @@
 {
   "name": "@mesh-gradient/vue",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "The SwiftUI Mesh Gradient abstraction for Vue",
   "keywords": [
     "mesh-gradient",
@@ -42,7 +42,10 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "clean": "rm -rf dist",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "check-types": "tsc --noEmit --pretty",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "peerDependencies": {
     "vue": ">=3.0.0"
@@ -55,11 +58,15 @@
     "@repo/ts-config": "workspace:*",
     "@repo/tsup-config": "workspace:*",
     "@types/node": "^22",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/test-utils": "^2.4.10",
     "eslint": "^9",
+    "happy-dom": "^20.9.0",
     "tsup": "^8",
     "turbo": "^2",
     "typescript": "^5",
-    "vue": "^3.5"
+    "vitest": "^3.2.4",
+    "vue": "^3"
   },
   "packageManager": "pnpm@9.0.0"
 }

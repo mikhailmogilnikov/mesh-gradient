@@ -40,13 +40,26 @@ export const MeshGradient = (props: MeshGradientProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const prevOptionsIdRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (!instance || !canvasRef.current) return;
+  /** Always read latest merged props on init (ref is not a valid effect dependency). */
+  const initialOptionsRef = useRef(options);
 
-    instance.init(canvasRef.current, options);
-    onInit?.(instance);
-    prevOptionsIdRef.current = JSON.stringify(options);
-  }, [instance, canvasRef.current]);
+  initialOptionsRef.current = options;
+
+  useEffect(() => {
+    if (!instance) return;
+
+    const id = requestAnimationFrame(() => {
+      const canvas = canvasRef.current;
+
+      if (!canvas) return;
+
+      instance.init(canvas, initialOptionsRef.current);
+      onInit?.(instance);
+      prevOptionsIdRef.current = JSON.stringify(initialOptionsRef.current);
+    });
+
+    return () => cancelAnimationFrame(id);
+  }, [instance, onInit]);
 
   useEffect(() => {
     if (!instance || !instance.isInitialized || prevOptionsIdRef.current === JSON.stringify(options)) return;

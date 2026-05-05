@@ -13,54 +13,29 @@ export function normalizeColor(hexCode: number): Vec3 {
   return [red, green, blue];
 }
 
-/**
- * Blend modes for WebGL
- */
-export const BlendModes: Record<string, number> = ['SCREEN', 'LINEAR_LIGHT'].reduce<Record<string, number>>(
-  (acc, modeName, index) => Object.assign(acc, { [modeName]: index }),
-  {},
-);
+/** HSL (0–360, 0–1, 0–1) → sRGB hex `#rrggbb`. */
+function hslToHex(hIn: number, s: number, l: number): string {
+  const h = ((hIn % 360) + 360) % 360;
+  const hp = h / 60;
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs((hp % 2) - 1));
+  let r1 = 0;
+  let g1 = 0;
+  let b1 = 0;
 
-/**
- * Helper function to assign properties dynamically
- * Used for setting up gradient properties
- */
-export function setProperty<T extends object, K extends PropertyKey>(object: T, propertyName: K, val: any): T & Record<K, any> {
-  if (propertyName in object) {
-    Object.defineProperty(object, propertyName, {
-      value: val,
-      enumerable: true,
-      configurable: true,
-      writable: true,
-    });
-  } else {
-    // @ts-ignore
-    object[propertyName] = val;
-  }
+  if (hp >= 0 && hp < 1) [r1, g1, b1] = [c, x, 0];
+  else if (hp < 2) [r1, g1, b1] = [x, c, 0];
+  else if (hp < 3) [r1, g1, b1] = [0, c, x];
+  else if (hp < 4) [r1, g1, b1] = [0, x, c];
+  else if (hp < 5) [r1, g1, b1] = [x, 0, c];
+  else [r1, g1, b1] = [c, 0, x];
 
-  // @ts-ignore
-  return object as T & Record<K, any>;
-}
+  const m = l - c / 2;
+  const r = Math.round((r1 + m) * 255);
+  const g = Math.round((g1 + m) * 255);
+  const b = Math.round((b1 + m) * 255);
 
-/**
- * Creates a default gradient configuration
- */
-export function createDefaultConfig(): {
-  presetName: string;
-  wireframe: boolean;
-  density: [number, number];
-  zoom: number;
-  rotation: number;
-  playing: boolean;
-} {
-  return {
-    presetName: '',
-    wireframe: false,
-    density: [0.06, 0.16],
-    zoom: 1,
-    rotation: 0,
-    playing: true,
-  };
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
 /**
@@ -71,44 +46,51 @@ export function createDefaultConfig(): {
 export function parseHexColor(hexValue: string): number | null {
   const trimmed = hexValue.trim();
 
-  // Handle short hex format (#RGB -> #RRGGBB)
-  if (trimmed.length === 4) {
-    const expanded = trimmed
-      .substr(1)
+  if (!(trimmed && trimmed.startsWith('#'))) return null;
+
+  const body = trimmed.slice(1);
+
+  /** #RGB → #RRGGBB */
+  if (body.length === 3) {
+    const expanded = body
       .split('')
       .map((c) => c + c)
       .join('');
 
-    return parseInt(expanded, 16);
+    const parsed = Number.parseInt(expanded, 16);
+
+    return Number.isFinite(parsed) ? parsed : null;
   }
 
-  // Handle standard hex format
-  if (trimmed && trimmed.startsWith('#')) {
-    const parsed = parseInt(trimmed.substr(1), 16);
+  /** #RRGGBB or #RRGGBBAA (alpha ignored for mesh colors) */
+  if (body.length === 8) {
+    const parsed = Number.parseInt(body.slice(0, 6), 16);
 
-    return isNaN(parsed) ? null : parsed;
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  if (body.length === 6) {
+    const parsed = Number.parseInt(body, 16);
+
+    return Number.isFinite(parsed) ? parsed : null;
   }
 
   return null;
 }
 
 /**
- * Generates random colors in hex format
- * @returns array of 4 random colors
+ * Generates four saturated colors in hex (HSL-based for more pleasing palettes).
  */
-export const genRandomColors = (): MeshGradientColorsConfig => {
-  const colors = [];
+export function genRandomColors(rand: () => number = Math.random): MeshGradientColorsConfig {
+  const colors: string[] = [];
 
   for (let i = 0; i < 4; i++) {
-    const r = Math.floor(Math.random() * 256);
-    const g = Math.floor(Math.random() * 256);
-    const b = Math.floor(Math.random() * 256);
+    const h = rand() * 360;
+    const s = 0.55 + rand() * 0.35;
+    const l = 0.42 + rand() * 0.22;
 
-    // Конвертируем в hex формат
-    const hexColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-
-    colors.push(hexColor);
+    colors.push(hslToHex(h, s, l));
   }
 
   return colors as MeshGradientColorsConfig;
-};
+}

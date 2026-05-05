@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in contributing to Web Mesh Gradient. We`re happy to have you here.
+Thanks for your interest in contributing to Web Mesh Gradient. We're happy to have you here.
 
 Please take a moment to review this document before submitting your first pull request. I also strongly recommend that you check for open issues and pull requests to see if someone else is working on something similar.
 
@@ -42,6 +42,25 @@ git checkout -b my-new-branch
 
 ```bash
 pnpm install
+```
+
+### Useful commands
+
+```bash
+# Typecheck all packages (Turbo)
+pnpm check-types
+
+# Lint
+pnpm lint
+
+# Tests (Turbo)
+pnpm test
+
+# Production build (Turbo)
+pnpm build
+
+# Documentation site locally (see `turbo.json` for tasks)
+pnpm dev
 ```
 
 ## Commit Convention

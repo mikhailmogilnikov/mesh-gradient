@@ -19,10 +19,10 @@ Documentation website [available here](https://meshgradientweb.vercel.app/).
 
 ## ⚠️ Important Notes
 
-1. **WebGL Requirement**: This library requires WebGL support in the browser
-2. **Canvas Element**: The component renders as a `<canvas>` element
-3. **Automatic Cleanup**: Memory cleanup is handled automatically
-4. **Performance**: Use `isStatic: true` for non-animated gradients
+1. **Sizing** — the component renders a `<canvas>`; pass `style` / `className` (or a sized wrapper) so layout is well-defined before first paint.
+2. **WebGL** — requires WebGL in the browser.
+3. **Cleanup** — handled on unmount; call `destroy` on any manual instances you create elsewhere.
+4. **Performance** — use `options.isStatic` for motionless gradients.
 
 ## 🛠️ Development
 
@@ -38,6 +38,9 @@ pnpm build
 
 # Lint code
 pnpm lint
+
+# From monorepo root — typecheck all packages
+pnpm check-types
 ```
 
 ## 📦 Related Packages

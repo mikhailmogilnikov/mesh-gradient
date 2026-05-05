@@ -19,24 +19,23 @@ Documentation website [available here](https://meshgradientweb.vercel.app/).
 
 ## ⚠️ Important Notes
 
-1. **Canvas Element** - Ensure the canvas element exists before initialization
-2. **WebGL Support** - The library requires WebGL support in the browser
-3. **Resource Cleanup** - Use `destroy()` when removing the component
-4. **Performance** - Use `isStatic: true` for static gradients
+1. **Canvas sizing** — set CSS dimensions (or a constrained parent layout). Logical size drives the mesh; resolution uses `pixelRatio`. See [**Canvas layout & HiDPI**](https://meshgradientweb.vercel.app/docs/advanced-usage#canvas-layout--hidpi).
+2. **Canvas element** — ensure the canvas exists before initialization (or enable `allowDocumentCanvasFallback` only when appropriate).
+3. **WebGL support** — the library requires WebGL in the browser.
+4. **Resource cleanup** — call `destroy()` when removing the gradient.
+5. **Performance** — use `isStatic: true` for non-animated output.
 
 ## 🛠️ Development
 
 ```bash
-# Clone repository
 git clone https://github.com/mikhailmogilnikov/mesh-gradient.git
-
-# Install dependencies
+cd mesh-gradient
 pnpm install
 
-# Development
-pnpm dev
-
-# Build
+# From monorepo root
+pnpm check-types
+pnpm test
+pnpm lint
 pnpm build
 ```
 

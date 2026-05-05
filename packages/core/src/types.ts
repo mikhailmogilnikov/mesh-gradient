@@ -145,7 +145,17 @@ export type MeshGradientColorsConfig = [string, string, string, string];
 export interface MeshGradientFrequencyConfig {
   x?: number;
   y?: number;
+  /** Added to `y` in the vec2 `noiseFreq` uniform (second frequency component). Defaults to `0`. */
   delta?: number;
+}
+
+export type MeshGradientReducedMotion = 'auto' | 'ignore' | 'force-static';
+
+/** Optional lifecycle hooks (do not store heavy closures if you destroy often). */
+export interface MeshGradientCallbacks {
+  onReady?: () => void;
+  onError?: (error: Error) => void;
+  onResize?: (size: { cssWidth: number; cssHeight: number }) => void;
 }
 
 export interface MeshGradientUpdateOptions {
@@ -178,6 +188,63 @@ export interface MeshGradientInitOptions {
 
 export interface MeshGradientOptions {
   /**
+   * If no canvas was resolved from `init(selector)`, fall back to `document.querySelector('canvas')`.
+   * Off by default — enable only for legacy pages without a clear target element.
+   */
+  allowDocumentCanvasFallback?: boolean;
+
+  /**
+   * Device pixel ratio for the backing store. Default: `min(window.devicePixelRatio, 2)` in browser.
+   */
+  pixelRatio?: number;
+
+  /**
+   * Cap mesh segments per axis (after density math) to limit cost on huge layouts.
+   */
+  maxSegments?: number;
+
+  /**
+   * Target render rate for time updates. Omit to match ~legacy ~30fps pacing (skip every other RAF when at 60Hz).
+   */
+  targetFps?: number;
+
+  /**
+   * Respect `prefers-reduced-motion`: `auto` enables static output when the OS requests reduced motion.
+   * @default 'auto'
+   */
+  reducedMotion?: MeshGradientReducedMotion;
+
+  /** Darken top gradient pass (prefer this over empty `data-js-darken-top` on canvas). */
+  darkenTop?: boolean;
+
+  /**
+   * Merged into `HTMLCanvasElement.getContext` for WebGL/webgl2.
+   */
+  webglContextAttributes?: WebGLContextAttributes;
+
+  /**
+   * Scene mesh density `[xSegScale, ySegScale]` multiplied by CSS size during resize.
+   */
+  density?: [number, number];
+
+  /** Wireframe (debug-style) drawing when supported by renderer. */
+  wireframe?: boolean;
+
+  zoom?: number;
+
+  rotation?: number;
+
+  presetName?: string;
+
+  callbacks?: MeshGradientCallbacks;
+
+  /**
+   * Legacy: add `isLoaded` to canvas and parent after init. Prefer `callbacks.onReady`.
+   * @default true
+   */
+  useLegacyLoadedClassBehavior?: boolean;
+
+  /**
    * Seed for the gradient. It needs to generate the same gradient pattern on every page load.
    * @default random value
    */
@@ -190,8 +257,8 @@ export interface MeshGradientOptions {
   animationSpeed?: number;
 
   /**
-   * Frequency for the gradient. Can be a single number or an object with x, y, and delta properties.
-   * @default { x:  0.00014, y: 0.00029, delta: 0.0001 }
+   * Frequency for the gradient: scalar (x = y), or an object with `delta` added to the `y` component in the `noiseFreq` uniform (defaults to 0 if omitted).
+   * @default x/y match built-in constants; `delta` is not applied
    */
   frequency?: number | MeshGradientFrequencyConfig;
 
@@ -215,7 +282,7 @@ export interface MeshGradientOptions {
 
   /**
    * Intersection observer options for pause on outside viewport option.
-   * @default { root: document.body, rootMargin: '0px', threshold: 0.05 }
+   * @default `{ root: null (viewport), rootMargin: '0px', threshold: 0.05 }`
    */
   pauseObserverOptions?: IntersectionObserverInit;
 

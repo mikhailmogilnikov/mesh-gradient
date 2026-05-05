@@ -1,17 +1,10 @@
-import { MeshGradientToggleColorsConfig, Vec4 } from './types';
+import type { MeshGradientToggleColorsConfig, Vec4 } from './types';
 
 // Animation and timing constants
 export const DEFAULT_TIME_VALUE = 1253106;
 export const MAX_FRAME_DELTA = 1000 / 15; // 15 FPS limit
-export const ANIMATION_DELTA_FAST = 160;
-export const ANIMATION_DELTA_SLOW = -160;
 export const DEFAULT_ANIMATION_SPEED = 1.0;
 
-// CSS and styling constants
-export const MAX_CSS_VAR_RETRIES = 200;
-export const SCROLLING_REFRESH_DELAY = 200;
-export const MIN_WIDTH_FOR_LEGEND = 1111;
-export const DEFAULT_HEIGHT = 600;
 export const LOADED_CLASS_DELAY = 3000;
 
 // Resize throttling constants
@@ -48,28 +41,9 @@ export const DEFAULT_FREQ_X = 14e-5;
 export const DEFAULT_FREQ_Y = 29e-5;
 export const DEFAULT_FREQ_DELTA = 1e-5;
 
-// Shader constants
-export const DEFAULT_SHADOW_POWER = 5;
 export const SMALL_SCREEN_SHADOW_POWER = 5;
 export const LARGE_SCREEN_SHADOW_POWER = 6;
 export const SMALL_SCREEN_WIDTH_THRESHOLD = 600;
-
-// Uniform values
-export const GLOBAL_NOISE_SPEED = 5e-6;
-export const VERT_DEFORM_NOISE_SPEED = 10;
-export const VERT_DEFORM_NOISE_FLOW = 3;
-export const VERT_DEFORM_OFFSET = -0.5;
-export const VERT_DEFORM_NOISE_FREQ: [number, number] = [3, 4];
-
-// Wave layer constants
-export const WAVE_LAYER_BASE_NOISE_SPEED = 11;
-export const WAVE_LAYER_NOISE_SPEED_INCREMENT = 0.3;
-export const WAVE_LAYER_BASE_NOISE_FLOW = 6.5;
-export const WAVE_LAYER_NOISE_FLOW_INCREMENT = 0.3;
-export const WAVE_LAYER_SEED_MULTIPLIER = 10;
-export const WAVE_LAYER_NOISE_FLOOR = 0.1;
-export const WAVE_LAYER_BASE_NOISE_CEIL = 0.63;
-export const WAVE_LAYER_NOISE_CEIL_INCREMENT = 0.07;
 
 // Default colors (fallback when CSS vars are not available)
 export const DEFAULT_FALLBACK_COLORS = [16711680, 16711680, 16711935, 65280, 255];

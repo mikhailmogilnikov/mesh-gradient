@@ -2,6 +2,18 @@
 
 In this section, we will cover some advanced usage of the library.
 
+import { Callout } from 'nextra/components'
+
+## Canvas layout & HiDPI
+
+The gradient measures your `<canvas>` with `getBoundingClientRect()` and sizes the WebGL framebuffer using that **logical CSS size** times **`pixelRatio`** (typically device pixel ratio, capped).
+
+Always give the canvas a real layout footprint in CSS (fixed `width`/`height`, utility classes, flex/grid parent, etc.). On each resize the renderer sets inline `width`/`height` in **CSS pixels** so the backing store can be larger than the layout box without the element exploding in size — avoiding a destructive feedback loop between layout and [`ResizeObserver`](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver).
+
+<Callout type="info">
+Prefer explicit sizing in your markup or styles; do not rely on default canvas dimensions alone in production layouts.
+</Callout>
+
 ## Instance methods
 
 Methods which are available on the `MeshGradient` instance. [API reference](/docs/api)
@@ -65,8 +77,6 @@ gradient.play(); // Resumes the gradient animation
 
 All available options for the gradient.
 
-import { Callout } from 'nextra/components'
-
 <Callout>
 You can generate the code for the options using the [Playground](/docs).
 </Callout>
@@ -118,6 +128,8 @@ const options: MeshGradientOptions = {
   },
 };
 ```
+
+The `delta` field is **added to `y`** in the internal `noiseFreq` uniform (second frequency component). Omit it to leave that offset at `0`.
 
 ### `activeColors`
 
@@ -196,3 +208,79 @@ const options: MeshGradientOptions = {
   --mesh-gradient-color-4: #ff8000;
 }
 ```
+
+### Scene & mesh
+
+Optional tuning for the generated plane mesh and drawing mode:
+
+```ts copy
+const options: MeshGradientOptions = {
+  density: [0.06, 0.16], // scales segment counts with CSS size
+  wireframe: false,
+  zoom: 1,
+  rotation: 0,
+  presetName: 'my-preset',
+};
+```
+
+### `pixelRatio`
+
+Scale factor for the WebGL **backing store** (defaults to a capped device pixel ratio in the browser). Logical mesh size still follows CSS layout; only the internal buffer resolution changes.
+
+```ts copy
+const options: MeshGradientOptions = {
+  pixelRatio: 1.5,
+};
+```
+
+### `maxSegments`
+
+Upper bound per axis on mesh segments after density math — useful on very large layouts.
+
+### `darkenTop`
+
+Boolean to enable the “darken top” shading pass (prefer over legacy `data-js-darken-top` on the canvas when possible).
+
+### `callbacks`
+
+Hooks for lifecycle integration:
+
+```ts copy
+const options: MeshGradientOptions = {
+  callbacks: {
+    onReady: () => {},
+    onError: (error) => console.error(error),
+    onResize: ({ cssWidth, cssHeight }) => {},
+  },
+};
+```
+
+### `webglContextAttributes`
+
+Merged into [`HTMLCanvasElement.getContext`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext) for WebGL contexts (for example `{ alpha: false }`, `{ preserveDrawingBuffer: true }`).
+
+### `targetFps`
+
+Caps time updates to a desired frame budget (helps steady pacing vs. display refresh).
+
+### `reducedMotion`
+
+Respects [`prefers-reduced-motion`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion) when `'auto'` (default), or force static rendering with `'force-static'` / `'ignore'`.
+
+### `allowDocumentCanvasFallback`
+
+When **`true`**, if `init(selector)` resolves no element, falls back to `document.querySelector('canvas')`. Off by default — enable only for legacy pages.
+
+### `useLegacyLoadedClassBehavior`
+
+When **`false`**, skips adding the historical `isLoaded` class to the canvas and its parent. Prefer `callbacks.onReady` for new code.
+
+### Init-only: `appearance` & `appearanceDuration`
+
+These live on `MeshGradientInitOptions` and apply to **`.init()`** only (see [API](/docs/api) for types). Control the initial fade-in (`appearance: 'smooth' | 'default'`).
+
+### Update-only: `transition` & `transitionDuration`
+
+Part of `MeshGradientUpdateOptions` for **`.update()`**: cross-fade between previous and new configuration (enabled by default; set `transition: false` for a hot path without full re-init).
+
+See the full field list in the [API reference](/docs/api#meshgradientoptions).

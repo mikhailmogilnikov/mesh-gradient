@@ -90,7 +90,7 @@ const toggleAnimation = () => {
 </script>
 ```
 
-### Advanced Configuration
+### Advanced configuration
 
 ```vue
 <template>
@@ -104,30 +104,29 @@ const toggleAnimation = () => {
 </template>
 
 <script setup lang="ts">
-import { MeshGradient, type MeshGradientProps } from '@mesh-gradient/vue';
+import type { MeshGradient as CoreGradient, MeshGradientOptions } from '@mesh-gradient/core';
+import { MeshGradient } from '@mesh-gradient/vue';
 
-const advancedOptions = {
-  colors: [
-    '#8B5CF6', // Purple
-    '#06B6D4', // Cyan
-    '#10B981', // Emerald
-    '#F59E0B'  // Amber
-  ],
-  speed: 0.02,
-  density: [0.06, 0.16],
-  points: 5,
-  isStatic: false
+const advancedOptions: MeshGradientOptions = {
+  colors: ['#8B5CF6', '#06B6D4', '#10B981', '#F59E0B'],
+  animationSpeed: 1.2,
+  density: [0.07, 0.08],
+  wireframe: false,
+  presetName: 'vue-demo',
+  isStatic: false,
 };
 
-const onGradientInit = (instance) => {
+function onGradientInit(instance: CoreGradient) {
   console.log('Gradient initialized:', instance);
-};
+}
 
-const onGradientUpdate = (instance) => {
+function onGradientUpdate(instance: CoreGradient) {
   console.log('Gradient updated:', instance);
-};
+}
 </script>
 ```
+
+See [Advanced usage](https://meshgradientweb.vercel.app/docs/advanced-usage) for the full option list.
 
 ## 📖 API Reference
 
@@ -161,25 +160,20 @@ Full documentation website [available here](https://meshgradientweb.vercel.app/)
 
 ## ⚠️ Important Notes
 
-1. **WebGL Requirement**: This library requires WebGL support in the browser
-2. **Canvas Element**: The component renders as a `<canvas>` element
-3. **Automatic Cleanup**: Memory cleanup is handled automatically
-4. **Performance**: Use `isStatic: true` for non-animated gradients
+1. **Sizing** — use `:style`, `class`, or a sized parent so the `<canvas>` has a predictable layout ([details](https://meshgradientweb.vercel.app/docs/advanced-usage#canvas-layout--hidpi)).
+2. **WebGL** — requires WebGL in the browser.
+3. **Cleanup** — handled on unmount when using `<MeshGradient />`; call `destroy()` on manually managed instances from `useMeshGradient` if needed.
+4. **Performance** — prefer `options.isStatic` when you do not need animation.
 
 ## 🛠️ Development
 
 ```bash
-# Install dependencies
 pnpm install
 
-# Start development 
 pnpm dev
-
-# Build package
 pnpm build
-
-# Lint code
 pnpm lint
+pnpm check-types   # run from monorepo root recommended
 ```
 
 ## 📦 Related Packages

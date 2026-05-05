@@ -1,6 +1,6 @@
 {
   "name": "@mesh-gradient/core",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "The SwiftUI Mesh Gradient abstraction for web",
   "keywords": [
     "mesh-gradient"
@@ -40,16 +40,21 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "clean": "rm -rf dist",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "check-types": "tsc --noEmit --pretty",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "@repo/tsup-config": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/ts-config": "workspace:*",
+    "@repo/tsup-config": "workspace:*",
     "eslint": "^9",
+    "happy-dom": "^20.9.0",
+    "tsup": "^8",
     "turbo": "^2",
     "typescript": "^5",
-    "tsup": "^8"
+    "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@9.0.0"
 }

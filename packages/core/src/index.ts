@@ -8,4 +8,7 @@ export type {
   MeshGradientFrequencyConfig,
   MeshGradientUpdateOptions,
   MeshGradientInitOptions,
+  MeshGradientCallbacks,
+  MeshGradientReducedMotion,
 } from './types';
+export type { MiniGlInitOptions } from './minigl';

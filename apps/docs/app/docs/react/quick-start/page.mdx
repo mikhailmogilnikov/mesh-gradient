@@ -18,13 +18,17 @@ const App = () => {
 }
 ```
 
-That's it! You should see the the result on the page:
+That's it! You should see the result on the page:
 
 import { MeshGradient } from '@mesh-gradient/react';
 
 <MeshGradient className='size-40 mt-4' />
 
 import { Callout } from 'nextra/components'
+
+<Callout>
+**Sizing:** set `style`, `className`, or a sized wrapper so the canvas always has a layout box. See [Canvas layout & HiDPI](/docs/advanced-usage#canvas-layout--hidpi).
+</Callout>
 
 <Callout>
 **Note:** By default, colors and seed (initial pattern) of the gradient are generated randomly.

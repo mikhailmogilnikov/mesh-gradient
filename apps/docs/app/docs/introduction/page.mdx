@@ -35,31 +35,37 @@ I decided to make it more readable and maintainable.
 ### Key changes
 
 - ✅ Rewritten the tool from scratch in **`TypeScript`**
-- ✅ Integration with **React** and **SSR**
+- ✅ Integration with **React**, **Vue 3**, and **SSR-friendly** builds
 - ✅ **New Documentation website** with [Playground](./)
 - ✅ Simplified API with **full type definitions**
-- ✅ **Performance optimizations** in core library (resize debounce, pause on out of viewport, removed unused event listeners, size for rendering context kept in sync with canvas size instead of `window` size, etc.)
+- ✅ **Performance-oriented core** (resize debounce, `ResizeObserver`, pause when off-screen, logical canvas size tied to layout and HiDPI buffer, target FPS, visibility handling, WebGL loss/restore helpers, and more)
 - ✅ A lot of **new features and improvements** in core library (animation speed, randomly generated colors and seeds, smooth appearance, fade transition between 2 gradients out of the box, etc.)
 - ✅ **Extended configuration** for the tool
 
 ## How to use it?
 
-You can start using `Mesh Gradient` in your project in 2 ways:
+You can start using Mesh Gradient in your project in three ways:
 
 import { Cards } from 'nextra/components'
-import { SiTypescript, SiReact } from "react-icons/si";
+import { SiTypescript, SiReact, SiVuedotjs } from "react-icons/si";
 
-<Cards num={2}>
+<Cards num={3}>
   <Cards.Card
     icon={<SiTypescript />}
-    title="Default implementation"
+    title="Vanilla TypeScript"
     href="/docs/quick-start"
     arrow
   />
   <Cards.Card
     icon={<SiReact />}
-    title="React implementation"
+    title="React"
     href="/docs/react/quick-start"
+    arrow
+  />
+  <Cards.Card
+    icon={<SiVuedotjs />}
+    title="Vue 3"
+    href="/docs/vue/quick-start"
     arrow
   />
 </Cards>

@@ -1,12 +1,13 @@
 {
   "name": "@repo/docs",
   "private": true,
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "scripts": {
     "dev": "next --turbopack",
     "build": "next build",
     "start": "next start",
+    "check-types": "tsc --noEmit --pretty",
     "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
   },
   "dependencies": {

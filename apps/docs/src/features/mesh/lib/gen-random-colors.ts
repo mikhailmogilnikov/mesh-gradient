@@ -6,7 +6,7 @@ export const genRandomColors = () => {
     const g = Math.floor(Math.random() * 256);
     const b = Math.floor(Math.random() * 256);
 
-    // Конвертируем в hex формат
+    // Convert to hex
     const hexColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 
     colors.push(hexColor);

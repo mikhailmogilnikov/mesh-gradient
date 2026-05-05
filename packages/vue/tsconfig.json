@@ -3,11 +3,11 @@
   "compilerOptions": {
     "target": "ES2020",
     "baseUrl": ".",
-    "rootDir": ".",
+    "rootDir": "../..",
     "outDir": "dist",
     "jsx": "preserve",
     "moduleResolution": "bundler"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"]
 }

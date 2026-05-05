@@ -31,7 +31,18 @@ jobs:
         env:
           NODE_ENV: production
           CI: true
+
+      - name: Check TypeScript types
+        run: pnpm check-types
+        env:
+          CI: true
+
       - name: Run lint
         run: pnpm lint
+        env:
+          CI: true
+
+      - name: Run tests
+        run: pnpm test
         env:
           CI: true

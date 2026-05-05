@@ -1,17 +1,20 @@
 # Mesh Gradient
 
-Apple-inspired animated **mesh gradient** for the web. Written fully on **TypeScript** and supercharged for **all modern frameworks**.
+Apple-inspired animated **mesh gradient** for the web. Written fully on **TypeScript** and packaged for vanilla JS, **React**, and **Vue**.
 
 ![hero](apps/docs/public/mesh.png)
 
 ## Documentation
 
-Documetation website [available here.](https://meshgradientweb.vercel.app)
+Documentation site: **[meshgradientweb.vercel.app](https://meshgradientweb.vercel.app)**
 
 ## Packages
 
-- [Vanilla](/packages/core)
-- [React](/packages/react)
+| Package               | Description                          |
+|-----------------------|--------------------------------------|
+| [`@mesh-gradient/core`](/packages/core)   | Vanilla `MeshGradient` class (WebGL) |
+| [`@mesh-gradient/react`](/packages/react) | React component & hooks               |
+| [`@mesh-gradient/vue`](/packages/vue)      | Vue 3 component & composable       |
 
 ## Credits
 

@@ -1,5 +1,16 @@
 # @mesh-gradient/react
 
+## 1.5.0
+
+### Minor Changes
+
+- introducing vue integration with Mesh Gradient
+
+### Patch Changes
+
+- Updated dependencies
+  - @mesh-gradient/core@1.5.0
+
 ## 1.4.1
 
 ### Patch Changes

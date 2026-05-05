@@ -1,6 +1,6 @@
 {
   "name": "@mesh-gradient/react",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "The SwiftUI Mesh Gradient abstraction for React",
   "keywords": [
     "mesh-gradient",
@@ -41,7 +41,10 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "clean": "rm -rf dist",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "check-types": "tsc --noEmit --pretty",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
@@ -54,13 +57,19 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/ts-config": "workspace:*",
     "@repo/tsup-config": "workspace:*",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
+    "happy-dom": "^20.9.0",
     "react": "^19",
+    "react-dom": "^19.1.1",
     "tsup": "^8",
     "turbo": "^2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@9.0.0"
 }

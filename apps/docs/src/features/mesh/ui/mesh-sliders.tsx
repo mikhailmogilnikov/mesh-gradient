@@ -28,7 +28,7 @@ export const MeshSliders = ({
   const [localAnimationSpeed, setLocalAnimationSpeed] = useState(animationSpeed ?? 1);
   const [localFrequency, setLocalFrequency] = useState(frequency ?? 0.0002);
 
-  // Дебаунснутые коллбэки для передачи наверх
+  // Debounced callbacks passed to parent
   const { debouncedCallback: debouncedOnSeedChange } = useDebounce(onSeedChange, DEBOUNCE_TIME);
   const { debouncedCallback: debouncedOnAnimationSpeedChange } = useDebounce(onAnimationSpeedChange, DEBOUNCE_TIME);
   const { debouncedCallback: debouncedOnFrequencyChange } = useDebounce(onFrequencyChange, DEBOUNCE_TIME);
