@@ -1,5 +1,13 @@
 # mesh-gradient
 
+## 1.5.1
+
+### Patch Changes
+
+- Fix HiDPI canvas sizing: set logical CSS width/height on the canvas alongside the framebuffer dimensions so layout no longer grows in a ResizeObserver feedback loop.
+
+  Also includes internal TypeScript/import cleanups affecting published types (`constants` uses `import type` where needed), tooling (`check-types` in workspaces and CI), and documentation/site updates.
+
 ## 1.5.0
 
 ### Minor Changes

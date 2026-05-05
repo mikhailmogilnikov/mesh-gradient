@@ -1,6 +1,6 @@
 {
   "name": "@mesh-gradient/vue",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "The SwiftUI Mesh Gradient abstraction for Vue",
   "keywords": [
     "mesh-gradient",
@@ -48,7 +48,7 @@
     "test:watch": "vitest"
   },
   "peerDependencies": {
-    "vue": ">=3.0.0"
+    "vue": ">=0.0.1"
   },
   "dependencies": {
     "@mesh-gradient/core": "workspace:*"
@@ -66,7 +66,7 @@
     "turbo": "^2",
     "typescript": "^5",
     "vitest": "^3.2.4",
-    "vue": "^3"
+    "vue": "^0.0.1"
   },
   "packageManager": "pnpm@9.0.0"
 }
