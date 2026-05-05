@@ -1,15 +1,14 @@
 # @mesh-gradient/react
 
-## 1.5.1
+## 2.0.0
 
-### Patch Changes
+### Major Changes
 
-- Fix HiDPI canvas sizing: set logical CSS width/height on the canvas alongside the framebuffer dimensions so layout no longer grows in a ResizeObserver feedback loop.
+- Aligns with **`@mesh-gradient/core` 2.0.0**: same rendering, lifecycle, and TypeScript guarantees as the major core release (layout/HiDPI fix, ResizeObserver pipeline, pacing, accessibility, WebGL resilience, expanded options).
 
-  Also includes internal TypeScript/import cleanups affecting published types (`constants` uses `import type` where needed), tooling (`check-types` in workspaces and CI), and documentation/site updates.
+- `<MeshGradient />` continues to mirror canvas DOM props onto the underlying `<canvas>`; **`options`** and **`isPaused`** stay the primary gradient controls. Install **React + core** packages at **2.x** together.
 
-- Updated dependencies
-  - @mesh-gradient/core@1.5.1
+See the [`@mesh-gradient/core` changelog](../core/CHANGELOG.md) for the full architectural and breaking-change narrative.
 
 ## 1.5.0
 

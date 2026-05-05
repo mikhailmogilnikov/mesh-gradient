@@ -1,15 +1,14 @@
 # @mesh-gradient/vue
 
-## 1.5.1
+## 2.0.0
 
-### Patch Changes
+### Major Changes
 
-- Fix HiDPI canvas sizing: set logical CSS width/height on the canvas alongside the framebuffer dimensions so layout no longer grows in a ResizeObserver feedback loop.
+- Aligns with **`@mesh-gradient/core` 2.0.0** for all gradient behavior (layout/HiDPI, resize observers, animation pacing, reduced motion, WebGL robustness).
 
-  Also includes internal TypeScript/import cleanups affecting published types (`constants` uses `import type` where needed), tooling (`check-types` in workspaces and CI), and documentation/site updates.
+- **`MeshGradient` component**: same `options` / `isPaused` contract; **`useMeshGradient`** still owns instance lifetime and `destroy()` on unmount. Prefer a **stable `options` reference** (`ref` / `reactive` / `computed`) when parents re-render often.
 
-- Updated dependencies
-  - @mesh-gradient/core@1.5.1
+See the [`@mesh-gradient/core` changelog](../core/CHANGELOG.md) for full release notes and migration guidance.
 
 ## 1.5.0
 
@@ -21,7 +20,6 @@
 
 - Updated dependencies
   - @mesh-gradient/core@1.5.0
-  - vue@0.0.1
 
 ## 1.4.1
 

@@ -6,11 +6,12 @@
   "linked": [
     [
       "@mesh-gradient/core",
-      "@mesh-gradient/react"
+      "@mesh-gradient/react",
+      "@mesh-gradient/vue"
     ]
   ],
 
-  "access": "restricted",
+  "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": ["@repo/docs", "react-app", "vue", "ts-app"]

@@ -8,6 +8,8 @@ Apple-inspired animated **mesh gradient** for the web. Written fully on **TypeSc
 
 Documentation site: **[meshgradientweb.vercel.app](https://meshgradientweb.vercel.app)**
 
+**Current npm line: `2.x`.** Major rewrite of the WebGL pipeline, sizing/HiDPI correctness, ResizeObserver-based layout, pacing & accessibility options, richer `MeshGradientOptions`, and refreshed React/Vue integrations. Upgrade **core + react/vue together** — see [**CHANGELOG**](./packages/core/CHANGELOG.md).
+
 ## Packages
 
 | Package               | Description                          |
