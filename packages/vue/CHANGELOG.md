@@ -1,5 +1,20 @@
 # @mesh-gradient/vue
 
+## 2.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @mesh-gradient/core@2.0.2
+
+## 2.0.1
+
+### Patch Changes
+
+- Fix package entry points and type exports for `@mesh-gradient/core` so TypeScript consumers resolve declarations correctly in ESM/CJS environments.
+- Updated dependencies
+  - @mesh-gradient/core@2.0.1
+
 ## 2.0.0
 
 ### Major Changes

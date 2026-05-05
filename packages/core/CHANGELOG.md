@@ -1,5 +1,17 @@
 # mesh-gradient
 
+## 2.0.2
+
+### Patch Changes
+
+- Fix responsive canvas behavior by no longer writing inline `style.width`/`style.height` during resize. This prevents overriding author CSS (for example `width: 100%`) and allows `ResizeObserver`-driven layout updates to work correctly.
+
+## 2.0.1
+
+### Patch Changes
+
+- Fix package entry points and type exports for `@mesh-gradient/core` so TypeScript consumers resolve declarations correctly in ESM/CJS environments.
+
 ## 2.0.0
 
 ### Major Changes

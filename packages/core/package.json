@@ -1,6 +1,6 @@
 {
   "name": "@mesh-gradient/core",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "The SwiftUI Mesh Gradient abstraction for web",
   "keywords": [
     "mesh-gradient"
@@ -16,13 +16,13 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.mts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/index.mjs"
       },
       "require": {

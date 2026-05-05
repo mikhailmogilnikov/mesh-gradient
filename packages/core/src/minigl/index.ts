@@ -142,12 +142,9 @@ export class MiniGl implements MiniGlRuntime {
     this.canvas.width = bufW;
     this.canvas.height = bufH;
 
-    // The width/height attributes control both the buffer size and the default layout box. Without
-    // explicit CSS the layout tracks DPR (300×150 → 600×300 → …), causing a ResizeObserver loop and freeze.
-    if (Number.isFinite(cssWidth) && Number.isFinite(cssHeight) && cssWidth > 0 && cssHeight > 0) {
-      this.canvas.style.width = `${cssWidth}px`;
-      this.canvas.style.height = `${cssHeight}px`;
-    }
+    // Do not set canvas.style width/height: pixel sizes override author CSS (e.g. `width: 100%`) and
+    // prevent responsive layout + ResizeObserver updates. Logical size must come from layout/CSS;
+    // backing-store size is bufW/bufH only.
 
     this.gl.viewport(0, 0, bufW, bufH);
 
