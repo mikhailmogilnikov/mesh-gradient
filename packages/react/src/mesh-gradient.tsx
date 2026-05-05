@@ -1,12 +1,10 @@
 'use client';
 
-import { HTMLAttributes, useEffect, useRef } from 'react';
-import {
-  MeshGradient as CoreMeshGradient,
-  MeshGradientInitOptions,
-  MeshGradientOptions,
-  MeshGradientUpdateOptions,
-} from '@mesh-gradient/core';
+import type { HTMLAttributes } from 'react';
+import type { MeshGradientInitOptions, MeshGradientOptions, MeshGradientUpdateOptions } from '@mesh-gradient/core';
+
+import { useEffect, useRef } from 'react';
+import { MeshGradient as CoreMeshGradient } from '@mesh-gradient/core';
 
 import { useMeshGradient } from './use-mesh-gradient';
 

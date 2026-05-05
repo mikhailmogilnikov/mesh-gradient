@@ -1,16 +1,15 @@
 import type { MiniGlUniform as MiniGlUniformIface, UniformConfig } from '../types';
 
 export class MiniGlUniform implements MiniGlUniformIface {
+  private readonly gl: WebGLRenderingContext;
   type: string;
   value: unknown;
   transpose?: boolean;
   excludeFrom?: 'vertex' | 'fragment';
   typeFn: string;
 
-  constructor(
-    private readonly gl: WebGLRenderingContext,
-    config: UniformConfig,
-  ) {
+  constructor(gl: WebGLRenderingContext, config: UniformConfig) {
+    this.gl = gl;
     this.type = 'float';
     Object.assign(this, config);
     this.typeFn =

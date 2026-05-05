@@ -1,6 +1,7 @@
 import type { MiniGlAttribute as MiniGlAttributeIface, AttributeConfig } from '../types';
 
 export class MiniGlAttribute implements MiniGlAttributeIface {
+  private readonly gl: WebGLRenderingContext;
   type: number;
   normalized: boolean;
   buffer: WebGLBuffer | null;
@@ -8,10 +9,8 @@ export class MiniGlAttribute implements MiniGlAttributeIface {
   size: number;
   values?: Float32Array | Uint16Array;
 
-  constructor(
-    private readonly gl: WebGLRenderingContext,
-    config: AttributeConfig,
-  ) {
+  constructor(gl: WebGLRenderingContext, config: AttributeConfig) {
+    this.gl = gl;
     this.type = gl.FLOAT;
     this.normalized = false;
     this.buffer = gl.createBuffer();

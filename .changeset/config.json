@@ -14,5 +14,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@repo/docs", "react-app", "vue", "ts-app"]
+  "ignore": ["@repo/docs"]
 }
