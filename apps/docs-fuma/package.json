@@ -1,0 +1,38 @@
+{
+  "name": "@repo/docs-fuma",
+  "private": true,
+  "version": "0.1.1",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "check-types": "tsc --noEmit --pretty"
+  },
+  "dependencies": {
+    "@mesh-gradient/core": "workspace:*",
+    "@mesh-gradient/react": "workspace:*",
+    "flexsearch": "^0.8.212",
+    "fumadocs-core": "^16.8.7",
+    "fumadocs-mdx": "^14.3.2",
+    "fumadocs-typescript": "^5.2.6",
+    "fumadocs-ui": "^16.8.7",
+    "next": "^16.2.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@tailwindcss/postcss": "^4.2.4",
+    "@types/flexsearch": "^0.7.42",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.33.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^5.8.3"
+  }
+}

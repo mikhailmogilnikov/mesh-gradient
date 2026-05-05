@@ -1,0 +1,75 @@
+---
+title: "Introduction"
+description: "Overview of Mesh Gradient, key features, motivation, and documentation structure."
+---
+
+<b>Mesh Gradient</b> is a library for creating stunning animated gradient effects.
+
+## Key Features
+
+<Callout title="🎨 Highly Customizable">
+Control colors, animation speed, frequency, and appearance with extensive configuration options.
+</Callout>
+
+<Callout title="🔄 Smooth Transitions">
+Built-in fade transitions between gradient configurations with customizable duration.
+</Callout>
+
+<Callout title="🚀 High Performance">
+Hardware-accelerated WebGL rendering with optimized frame skipping and auto-pause when out of viewport.
+</Callout>
+
+<Callout title="⚡ Zero Dependencies">
+Lightweight core library (~8kb gzipped) with no external dependencies.
+</Callout>
+
+
+
+## Motivation
+
+In 2021 [@jordienr](https://github.com/jordienr) and [@ndom91](https://github.com/ndom91) have uploaded to GitHub gist a [Stripe landing page gradient effect](https://gist.github.com/jordienr/64bcf75f8b08641f205bd6a1a0d4ce1d). They have also created a [Whatamesh](https://whatamesh.vercel.app/) website to showcase this beautiful package.
+
+However, the tool was one large file written in `JavaScript`, had unreadable code and structure, unused event listeners and pretty weird type definitions.
+
+I decided to make it more readable and maintainable.
+
+### Key changes
+
+- ✅ Rewritten the tool from scratch in **`TypeScript`**
+- ✅ Integration with **React**, **Vue 3**, and **SSR-friendly** builds
+- ✅ **New Documentation website** with [Playground](./)
+- ✅ Simplified API with **full type definitions**
+- ✅ **Performance-oriented core** (resize debounce, `ResizeObserver`, pause when off-screen, logical canvas size tied to layout and HiDPI buffer, target FPS, visibility handling, WebGL loss/restore helpers, and more)
+- ✅ A lot of **new features and improvements** in core library (animation speed, randomly generated colors and seeds, smooth appearance, fade transition between 2 gradients out of the box, etc.)
+- ✅ **Extended configuration** for the tool
+
+## How to use it?
+
+You can start using Mesh Gradient in your project in three ways:
+
+import { Cards } from '@/components/nextra-compat'
+import { SiTypescript, SiReact, SiVuedotjs } from "react-icons/si";
+
+<Cards num={3}>
+  <Cards.Card
+    icon={<SiTypescript />}
+    title="Vanilla TypeScript"
+    href="/docs/quick-start"
+    arrow
+  />
+  <Cards.Card
+    icon={<SiReact />}
+    title="React"
+    href="/docs/react/quick-start"
+    arrow
+  />
+  <Cards.Card
+    icon={<SiVuedotjs />}
+    title="Vue 3"
+    href="/docs/vue/quick-start"
+    arrow
+  />
+</Cards>
+
+
+

@@ -1,0 +1,63 @@
+---
+title: "Quick Start"
+description: "Install Mesh Gradient and render your first animated gradient in minutes."
+---
+
+## Installation
+
+```sh npm2yarn copy
+npm install @mesh-gradient/core
+```
+
+## Usage
+
+Place the canvas element in body of your HTML file.
+
+```html copy filename="index.html"
+<body>
+  <canvas id="canvas" style="width: 10rem; height: 10rem;"></canvas>
+</body>
+```
+
+Import the `MeshGradient` class and initialize the gradient by passing the canvas element.
+
+```ts copy filename="index.ts"
+import { MeshGradient } from '@mesh-gradient/core';
+
+const gradient = new MeshGradient();
+
+gradient.init('#canvas');
+```
+
+That's it! You should see the result on the page:
+
+import { MeshGradient } from '@mesh-gradient/react';
+
+<MeshGradient className='size-40 mt-4' />
+
+<Callout>
+**Sizing:** give the canvas CSS dimensions (or a sized parent). See [Canvas layout & HiDPI](/docs/advanced-usage#canvas-layout--hidpi) for how layout interacts with the framebuffer.
+</Callout>
+
+<Callout>
+**Note:** By default, colors and seed (initial pattern) of the gradient are generated randomly.
+</Callout>
+
+## Configure gradient
+
+The mesh gradient can be configured by passing an options object as the second argument to the `init` method.
+
+```ts copy 
+import { type MeshGradientOptions } from '@mesh-gradient/core';
+
+const options: MeshGradientOptions = {
+  colors: ['#043D5D', '#032E46', '#23B684', '#0F595E'],
+};
+
+gradient.init('#canvas', options);
+```
+
+
+<Callout>
+ You can generate code for config by using [Playground](./) interface or explore all available options in the [API section.](./api#meshgradientoptions) 
+</Callout>

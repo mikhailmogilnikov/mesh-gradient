@@ -1,0 +1,62 @@
+---
+title: "API Reference"
+description: "Complete API reference for Mesh Gradient core options, lifecycle methods, and update behavior."
+---
+
+# API
+
+What methods and properties are available in Mesh Gradient and how to use them.
+
+Most configuration fields are modeled in TypeScript as `MeshGradientOptions` (plus init- and update-focused slices — see [Advanced usage](/docs/advanced-usage) for how `appearance`, `transition`, and related fields apply).
+
+import { AutoTypeTable } from '@/components/auto-type-table';
+
+
+### MeshGradient
+
+The main instance API.
+
+```ts
+import { MeshGradient } from '@mesh-gradient/core';
+
+const gradient = new MeshGradient();
+```
+ 
+<AutoTypeTable
+  path="../../packages/core/src/gradient/mesh-gradient.ts"
+  type={`import { MeshGradient } from '../../packages/core/src/gradient/mesh-gradient';
+export type MeshGradientPublicAPI = Pick<MeshGradient, 'init' | 'update' | 'destroy' | 'play' | 'pause' | 'isInitialized'>;`}
+  name="MeshGradientPublicAPI"
+/>
+
+<br />
+
+
+### MeshGradientOptions
+
+Options for `.init()` and `.update()` methods.
+
+```ts
+import { MeshGradientOptions } from '@mesh-gradient/core';
+
+const options: MeshGradientOptions = {
+  colors: ['#000000', '#ffffff', '#000000', '#ffffff'],
+};
+```
+<AutoTypeTable path="../../packages/core/src/types.ts" name="MeshGradientOptions" />
+
+<br />
+
+#### Init Options
+
+Type `MeshGradientInitOptions` contains additional options for `.init()` method. Not used in `.update()` method.
+
+<AutoTypeTable path="../../packages/core/src/types.ts" name="MeshGradientInitOptions" />
+
+<br />
+
+#### Update Options
+
+Type `MeshGradientUpdateOptions` contains additional options for `.update()` method.
+
+<AutoTypeTable path="../../packages/core/src/types.ts" name="MeshGradientUpdateOptions" />
