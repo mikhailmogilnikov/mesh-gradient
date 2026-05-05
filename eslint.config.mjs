@@ -5,6 +5,15 @@ export default defineConfig([
   ...baseConfig,
   {
     files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'],
-    ignores: ['node_modules/**', 'dist/**', 'build/**', '.next/**', 'coverage/**', '**/*.config.js', '**/*.config.ts'],
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      '.next/**',
+      'coverage/**',
+      '**/*.config.js',
+      '**/*.config.ts',
+      'apps/**/.source/**',
+    ],
   },
 ]);
